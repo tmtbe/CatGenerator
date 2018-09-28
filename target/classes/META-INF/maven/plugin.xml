@@ -13,76 +13,6 @@
   <inheritedByDefault>true</inheritedByDefault>
   <mojos>
     <mojo>
-      <goal>all</goal>
-      <requiresDirectInvocation>false</requiresDirectInvocation>
-      <requiresProject>true</requiresProject>
-      <requiresReports>false</requiresReports>
-      <aggregator>false</aggregator>
-      <requiresOnline>false</requiresOnline>
-      <inheritedByDefault>true</inheritedByDefault>
-      <phase>pre-integration-test</phase>
-      <implementation>com.huiyi.plugin.AllMojo</implementation>
-      <language>java</language>
-      <instantiationStrategy>per-lookup</instantiationStrategy>
-      <executionStrategy>once-per-session</executionStrategy>
-      <threadSafe>false</threadSafe>
-      <parameters>
-        <parameter>
-          <name>prefix</name>
-          <type>java.lang.String</type>
-          <required>false</required>
-          <editable>true</editable>
-          <description></description>
-        </parameter>
-        <parameter>
-          <name>project</name>
-          <type>org.apache.maven.project.MavenProject</type>
-          <required>false</required>
-          <editable>false</editable>
-          <description></description>
-        </parameter>
-      </parameters>
-      <configuration>
-        <prefix implementation="java.lang.String" default-value="---">${buildinfo.prefix}</prefix>
-        <project implementation="org.apache.maven.project.MavenProject">${project}</project>
-      </configuration>
-    </mojo>
-    <mojo>
-      <goal>oc</goal>
-      <requiresDirectInvocation>false</requiresDirectInvocation>
-      <requiresProject>true</requiresProject>
-      <requiresReports>false</requiresReports>
-      <aggregator>false</aggregator>
-      <requiresOnline>false</requiresOnline>
-      <inheritedByDefault>true</inheritedByDefault>
-      <phase>pre-integration-test</phase>
-      <implementation>com.huiyi.plugin.OcMojo</implementation>
-      <language>java</language>
-      <instantiationStrategy>per-lookup</instantiationStrategy>
-      <executionStrategy>once-per-session</executionStrategy>
-      <threadSafe>false</threadSafe>
-      <parameters>
-        <parameter>
-          <name>prefix</name>
-          <type>java.lang.String</type>
-          <required>false</required>
-          <editable>true</editable>
-          <description></description>
-        </parameter>
-        <parameter>
-          <name>project</name>
-          <type>org.apache.maven.project.MavenProject</type>
-          <required>false</required>
-          <editable>false</editable>
-          <description></description>
-        </parameter>
-      </parameters>
-      <configuration>
-        <prefix implementation="java.lang.String" default-value="---">${buildinfo.prefix}</prefix>
-        <project implementation="org.apache.maven.project.MavenProject">${project}</project>
-      </configuration>
-    </mojo>
-    <mojo>
       <goal>android</goal>
       <requiresDirectInvocation>false</requiresDirectInvocation>
       <requiresProject>true</requiresProject>
@@ -127,6 +57,76 @@
       <inheritedByDefault>true</inheritedByDefault>
       <phase>pre-integration-test</phase>
       <implementation>com.huiyi.plugin.FeginMojo</implementation>
+      <language>java</language>
+      <instantiationStrategy>per-lookup</instantiationStrategy>
+      <executionStrategy>once-per-session</executionStrategy>
+      <threadSafe>false</threadSafe>
+      <parameters>
+        <parameter>
+          <name>prefix</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description></description>
+        </parameter>
+        <parameter>
+          <name>project</name>
+          <type>org.apache.maven.project.MavenProject</type>
+          <required>false</required>
+          <editable>false</editable>
+          <description></description>
+        </parameter>
+      </parameters>
+      <configuration>
+        <prefix implementation="java.lang.String" default-value="---">${buildinfo.prefix}</prefix>
+        <project implementation="org.apache.maven.project.MavenProject">${project}</project>
+      </configuration>
+    </mojo>
+    <mojo>
+      <goal>all</goal>
+      <requiresDirectInvocation>false</requiresDirectInvocation>
+      <requiresProject>true</requiresProject>
+      <requiresReports>false</requiresReports>
+      <aggregator>false</aggregator>
+      <requiresOnline>false</requiresOnline>
+      <inheritedByDefault>true</inheritedByDefault>
+      <phase>pre-integration-test</phase>
+      <implementation>com.huiyi.plugin.AllMojo</implementation>
+      <language>java</language>
+      <instantiationStrategy>per-lookup</instantiationStrategy>
+      <executionStrategy>once-per-session</executionStrategy>
+      <threadSafe>false</threadSafe>
+      <parameters>
+        <parameter>
+          <name>prefix</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description></description>
+        </parameter>
+        <parameter>
+          <name>project</name>
+          <type>org.apache.maven.project.MavenProject</type>
+          <required>false</required>
+          <editable>false</editable>
+          <description></description>
+        </parameter>
+      </parameters>
+      <configuration>
+        <prefix implementation="java.lang.String" default-value="---">${buildinfo.prefix}</prefix>
+        <project implementation="org.apache.maven.project.MavenProject">${project}</project>
+      </configuration>
+    </mojo>
+    <mojo>
+      <goal>oc</goal>
+      <requiresDirectInvocation>false</requiresDirectInvocation>
+      <requiresProject>true</requiresProject>
+      <requiresReports>false</requiresReports>
+      <aggregator>false</aggregator>
+      <requiresOnline>false</requiresOnline>
+      <inheritedByDefault>true</inheritedByDefault>
+      <phase>pre-integration-test</phase>
+      <implementation>com.huiyi.plugin.OcMojo</implementation>
       <language>java</language>
       <instantiationStrategy>per-lookup</instantiationStrategy>
       <executionStrategy>once-per-session</executionStrategy>

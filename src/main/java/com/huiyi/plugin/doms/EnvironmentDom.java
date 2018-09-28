@@ -1,5 +1,6 @@
 package com.huiyi.plugin.doms;
 
+import com.huiyi.plugin.Global;
 import org.dom4j.Attribute;
 import org.dom4j.Element;
 
@@ -38,6 +39,9 @@ public class EnvironmentDom {
     }
 
     public void setRoot_path(String root_path) {
+        if(root_path.equals("local")){
+            root_path = Global.LocalPath;
+        }
         this.root_path = root_path;
     }
 

@@ -2,6 +2,7 @@
 <!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by 123 (456) -->
 #set($environment = $environment)
 #set($models = $protoDom.getModelDoms())
+#set($baseParams = $protoDom.getBaseParamDoms())
 #set($controllers = $protoDom.getControllerDoms())
 #set($marcoFiles = $protoDom.getMarcoFileDoms())
 #set($controller_package = $environment.controller_package)

@@ -31,6 +31,7 @@ public class JsMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException {
         Build build = project.getBuild();
         ReadProto readProto = new ReadProto();
+        Global.LocalPath = build.getSourceDirectory()+"/";
         String filepath = build.getSourceDirectory() + "/../resources/catgen/";
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
         InputStream is = classloader.getResourceAsStream("banner.txt");
