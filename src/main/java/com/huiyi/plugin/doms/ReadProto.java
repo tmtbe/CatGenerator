@@ -90,6 +90,7 @@ public class ReadProto {
     private void getProto(File file) throws Exception {
         SAXReader reader = new SAXReader();
         ProtoDom protoDom = new ProtoDom();
+        protoDom.setFile_name(file.getName().split("\\.")[0]);
         Document document = reader.read(file);
         Element bookstore = document.getRootElement();
         Iterator storeit = bookstore.elementIterator();

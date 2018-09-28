@@ -21,7 +21,7 @@ public class ProtoDom {
     private ArrayList<ControllerDom> compatibleGenericsControllerDoms;
     private BaseTools baseTools;
     private JavaTool javaTool;
-
+    private String file_name;
     public ProtoDom() {
         javaTool = new JavaTool();
         baseParamDoms = new ArrayList<>();
@@ -210,5 +210,13 @@ public class ProtoDom {
         }
         compatibleGenericsModelDoms.add(clone);
 
+    }
+
+    public String getFile_name() {
+        return file_name;
+    }
+
+    public void setFile_name(String file_name) {
+        this.file_name = file_name;
     }
 }

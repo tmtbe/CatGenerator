@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by 123 (456) -->
+#set($environment = $environment)
+#set($models = $protoDom.getModelDoms())
+#set($baseParams = $protoDom.getBaseParamDoms())
+#set($controllers = $protoDom.getControllerDoms())
+#set($marcoFiles = $protoDom.getMarcoFileDoms())
+#set($controller_package = $environment.controller_package)
+#set($model_package = $environment.model_package)
+#set($marcos_package = $environment.marcos_package)
+#set($service_name = $protoDom.file_name)
+<proto>
+
+<file name="${tool.getPath($controller_package)}params/base/BaseParams.java">
+    <![CDATA[
+package ${controller_package}.params.base;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel
+public class BaseParams{
+#foreach($methodParameterDom in ${baseParams})
+    @ApiModelProperty("${methodParameterDom.des}")
+    private $tool.typeChange(${methodParameterDom.type}) ${methodParameterDom.name};
+#end
+
+#foreach($methodParameterDom in ${baseParams})
+    public $tool.typeChange(${methodParameterDom.type}) get$tool.toUpperCaseFirstOne(${methodParameterDom.name})() {
+        return ${methodParameterDom.name};
+    }
+
+    public void set$tool.toUpperCaseFirstOne(${methodParameterDom.name}) ($tool.typeChange(${methodParameterDom.type}) ${methodParameterDom.name}) {
+        this.${methodParameterDom.name} = ${methodParameterDom.name};
+    }
+#end
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getSimpleName());
+        sb.append(" [");
+#foreach($methodParameterDom in ${baseParams})
+        sb.append("${methodParameterDom.name}=").append(${methodParameterDom.name}==null?"null":${methodParameterDom.name}.toString());
+#end
+        sb.append("]");
+        return sb.toString();
+    }
+}
+    ]]>
+</file>
+
+#foreach($controller in $controllers)
+#foreach($method in ${controller.methodDoms})
+    <file name="${tool.getPath($controller_package)}params/${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params.java">
+        <![CDATA[
+package ${controller_package}.params;
+import ${controller_package}.params.base.BaseParams;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel
+public class ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params extends BaseParams {
+#foreach($methodParameterDom in ${method.methodParameterDoms})
+    @ApiModelProperty("${methodParameterDom.des}")
+    private $tool.typeChange(${methodParameterDom.type}) ${methodParameterDom.name};
+#end
+
+#foreach($methodParameterDom in ${method.methodParameterDoms})
+    public $tool.typeChange(${methodParameterDom.type}) get$tool.toUpperCaseFirstOne(${methodParameterDom.name})() {
+        return ${methodParameterDom.name};
+    }
+
+    public void set$tool.toUpperCaseFirstOne(${methodParameterDom.name}) ($tool.typeChange(${methodParameterDom.type}) ${methodParameterDom.name}) {
+        this.${methodParameterDom.name} = ${methodParameterDom.name};
+    }
+#end
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getSimpleName());
+        sb.append(" [");
+        sb.append(super.toString());
+#foreach($methodParameterDom in ${method.methodParameterDoms})
+        sb.append("${methodParameterDom.name}=").append(${methodParameterDom.name}==null?"null":${methodParameterDom.name}.toString());
+#end
+        sb.append("]");
+        return sb.toString();
+    }
+}
+        ]]>
+    </file>
+#end
+#end
+#foreach($controller in $controllers)
+    <file name="${tool.getPath($controller_package)}${controller.name}Client.java">
+<![CDATA[
+${environment.notes}
+package ${controller_package};
+import ${model_package}.*;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+import ${controller_package}.params.*;
+import org.springframework.cloud.openfeign.FeignClient;
+import java.util.List;
+
+@FeignClient(name = "${service_name}")
+@RequestMapping("${controller.url}")
+public interface ${controller.name}Client {
+#foreach($method in ${controller.methodDoms})
+    /**
+    * ${method.des}
+    */
+    @$tool.toUpperCaseFirstOneOtherLow(${method.method})Mapping("${method.url}")
+#if(${method.methodParameterDoms.size()} == 0)
+    $tool.typeChange(${method.rep}) ${method.name}();
+#else
+    $tool.typeChange(${method.rep}) ${method.name}(@RequestBody ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params);
+#end
+#end
+}
+]]>
+    </file>
+#end
+
+
+</proto>
