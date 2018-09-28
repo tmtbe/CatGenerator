@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by 123 (456) -->
+#set($environment = $environment)
+#set($models = $protoDom.getCompatibleGenericsModelDoms())
+#set($controllers = $protoDom.getCompatibleGenericsControllerDoms())
+#set($marcoFiles = $protoDom.getMarcoFileDoms())
+#set($baseParams = $protoDom.getBaseParamDoms())
+<proto>
+    <file name="gen.js">
+<![CDATA[
+let build = new Build();
+function Build() {
+    /**
+     * @param json
+     * @param isMock
+     * @returns {boolean}
+     */
+    this.buildboolean=function (json,isMock = false) {
+        if(json==null) return false;
+        if(json=='1'||json=='true'||json==1||json==true) return true;
+        return false;
+    };
+    /**
+     * @param json
+     * @param isMock
+     * @returns {Array.<boolean>}
+     */
+    this.buildboolean_array=function (json,isMock = false) {
+        let result = [];
+        if(json==null) {
+            if(isMock){
+                return [false,false,false];
+            }else{
+                return result;
+            }
+        }
+        for (let k = 0, length = json.length; k < length; k++) {
+            result[k] = this.buildbool(json[k],isMock);
+        }
+        return result;
+    };
+    /**
+     * @param json
+     * @param isMock
+     * @returns {int}
+     */
+    this.buildint=function (json,isMock = false) {
+        if(json==null) return 0;
+        return parseInt(json)
+    };
+    /**
+     * @param json
+     * @param isMock
+     * @returns {Array.<int>}
+     */
+    this.buildint_array=function (json,isMock = false) {
+        let result = [];
+        if(json==null) {
+            if(isMock){
+                return [0,1,2];
+            }else{
+                return result;
+            }
+        }
+        for (let k = 0, length = json.length; k < length; k++) {
+            result[k] = this.buildint(json[k],isMock);
+        }
+        return result;
+    };
+    /**
+     * @param json
+     * @param isMock
+     * @returns {string}
+     */
+    this.buildstring=function(json,isMock = false) {
+        if(json==null) return "";
+        return String(json);
+    };
+    /**
+     * @param json
+     * @param isMock
+     * @returns {Array.<string>}
+     */
+    this.buildstring_array=function (json,isMock = false) {
+        let result = [];
+        if(json==null) {
+            if(isMock){
+                return ["test1","test2","test3"];
+            }else{
+                return result;
+            }
+        }
+        for (let k = 0, length = json.length; k < length; k++) {
+            result[k] = this.buildstring(json[k],isMock);
+        }
+        return result;
+    };
+#foreach($model in $models)
+    /**
+     * @param json
+     * @param isMock
+     * @returns {${model.name}}
+     */
+    this.build${model.name}=function (json,isMock = false) {
+        if(json==null) {
+            if(isMock){
+                return new ${model.name}(null,isMock);
+            }else{
+                return null;
+            }
+        }
+        return new ${model.name}(json);
+    };
+    /**
+     * @param json
+     * @param isMock
+     * @returns {Array.<${model.name}>}
+     */
+    this.build${model.name}_array=function (json,isMock = false) {
+        let result = [];
+        if(json==null) {
+            if(isMock){
+                return [new ${model.name}(null),new ${model.name}(null),new ${model.name}(null)];
+            }else{
+                return result;
+            }
+        }
+        for (let k = 0, length = json.length; k < length; k++) {
+            result[k] = this.build${model.name}(json[k]);
+        }
+        return result;
+    };
+#end
+}
+#foreach($model in $models)
+/** ${model.des} **/
+function ${model.name}(json,isMock=false){
+#foreach($parameter in ${model.modelParameterDoms})
+    /**
+     * ${parameter.name}
+     * @param isMock
+     * @type {${tool.desType($parameter.type)}}
+     */
+    this.${parameter.name} = build.build${tool.typeChange($parameter.type)}(json&&(json.${parameter.name}!=null)?json.${parameter.name}:null,isMock);
+#end
+}
+#end
+
+#foreach($marcoFile in $marcoFiles)
+let ${marcoFile.name} = {
+#set($count=$marcoFile.marcoDoms.size())
+#set($index=0)
+#foreach($marco in ${marcoFile.marcoDoms})
+#set($index=$index+1)
+    /**
+     * ${marco.des}
+     * @type {${tool.desType($marco.type)}}
+     */
+#if($index==$count)
+    $marco.name:$marco.value
+#else
+    $marco.name:$marco.value,
+#end
+#end
+}
+#end
+
+function sendAjax(ajax) {
+    return new Promise(function (resolve, reject) {
+        $.ajax({
+                "url": ajax.url,
+                "type": ajax.type,
+                "dataType": ajax.dataType,
+                "contentType": ajax.contentType,
+                "timeout": ajax.timeout,
+                "cache": ajax.cache,
+                "global": ajax.global,
+                "hearders": ajax.hearders,
+                "ifModified": ajax.ifModified,
+                "data": ajax.data(),
+                "success": function(result){
+                        resolve(result);
+                    },
+                "error": function (result) {
+                        reject(result);
+                    }
+                })
+        });
+}
+
+#foreach($controller in $controllers)
+#foreach($method in ${controller.methodDoms})
+function ${controller.name}_${method.name}() {
+#foreach($methodParameterDom in ${baseParams})
+    /**
+    * parameter $methodParameterDom.des
+    * @type {$tool.desType($methodParameterDom.type)}
+    */
+    this.p_${methodParameterDom.name} = build.build${tool.typeChange($methodParameterDom.type)}(null);
+#end
+#foreach($methodParameterDom in ${method.methodParameterDoms})
+    /**
+     * parameter $methodParameterDom.des
+     * @type {$tool.desType($methodParameterDom.type)}
+     */
+    this.p_${methodParameterDom.name} = build.build${tool.typeChange($methodParameterDom.type)}(null);
+#end
+    this.url = "$environment.baseUrl/$controller.url/$method.url";
+    this.type = "$method.method";
+    this.dataType = "json";
+    this.contentType = "application/json";
+    this.timeout = 5000;
+    this.cache = false;
+    this.global = false;
+    this.ifModified = false;
+    this.hearders = {};
+    this.data = function(){
+        return JSON.stringify({
+#foreach($methodParameterDom in ${baseParams})
+            ${methodParameterDom.name}:this.p_${methodParameterDom.name},
+#end
+#foreach($methodParameterDom in ${method.methodParameterDoms})
+            ${methodParameterDom.name}:this.p_${methodParameterDom.name},
+#end
+        })
+    }
+    this.mock = build.build${tool.typeChange($method.rep)}(null,true);
+    this.testMock = false;
+    this.result = null;
+    let self = this;
+    this.send = async function () {
+        if(self.testMock){
+            self.result = self.mock;
+            return;
+        }
+        try {
+            let data = await sendAjax(self);
+#if(${tool.isBaseType($method.rep)})
+            self.result = build.build${tool.typeChange($method.rep)}(data);
+#else
+            self.result = new ${tool.typeChange($method.rep)}(data);
+#end
+        }catch (e) {
+            console.error("[curl error]"+self.url);
+            console.error(e);
+            self.result = self.mock;
+        }
+    }
+}
+#end
+#end
+]]>
+    </file>
+
+</proto>

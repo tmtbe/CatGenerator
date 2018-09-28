@@ -37,7 +37,7 @@ public class ReadProto {
     /**
      * 执行
      */
-    public void run(Log log) throws Exception {
+    public void run(Log log,String environmentName) throws Exception {
         //获取所有的proto
         for (File file : files) {
             getProto(file);
@@ -58,10 +58,15 @@ public class ReadProto {
         for (ProtoDom protoDom : protoDoms) {
             protoDom.compatibleGenerics(modelDoms);
             for (Map.Entry<String, EnvironmentDom> entry : protoDom.getEnvironmentDoms().entrySet()) {
-                System.out.println("Key: " + entry.getKey() + " Value: " + entry.getValue());
+                EnvironmentDom environment = protoDom.getEnvironmentDoms().get(entry.getKey());
+                if(!environmentName.equals("all")){
+                    if(!environment.getLanguage().equals(environmentName)){
+                        continue;
+                    }
+                }
+                log.info("开始生成"+environment.getLanguage()+"代码");
                 Template t = ve.getTemplate("catgen/" + entry.getKey() + ".vm");
                 VelocityContext ctx = new VelocityContext();
-                EnvironmentDom environment = protoDom.getEnvironmentDoms().get(entry.getKey());
                 ctx.put("environment", environment);
                 ctx.put("protoDom", protoDom);
                 Class clazz = Class.forName(environment.getTool_class());

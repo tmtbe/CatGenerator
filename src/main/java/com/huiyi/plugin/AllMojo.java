@@ -11,11 +11,11 @@ import java.io.InputStream;
 import java.util.Scanner;
 
 /**
- * @goal gen
+ * @goal all
  * @phase pre-integration-test
  * @author zhangjincheng
  */
-public class GenMojo extends AbstractMojo {
+public class AllMojo extends AbstractMojo {
     /**
      * @parameter expression="${project}"
      * @readonly
@@ -52,7 +52,7 @@ public class GenMojo extends AbstractMojo {
             }
         }
         try {
-            readProto.run(getLog());
+            readProto.run(getLog(),"all");
         } catch (Exception e) {
             getLog().error(e);
         }
