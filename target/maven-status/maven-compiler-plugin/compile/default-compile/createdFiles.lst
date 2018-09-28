@@ -1,7 +1,6 @@
 com\huiyi\plugin\AndroidMojo.class
 com\huiyi\plugin\JavaMojo.class
 com\huiyi\plugin\tools\JavaTool.class
-com\huiyi\plugin\AllMojo.class
 com\huiyi\plugin\tools\BaseTools.class
 com\huiyi\plugin\OcMojo.class
 com\huiyi\plugin\FeginMojo.class
@@ -17,4 +16,6 @@ com\huiyi\plugin\doms\Help.class
 com\huiyi\plugin\doms\ModelParameterDom.class
 com\huiyi\plugin\tools\JsTool.class
 com\huiyi\plugin\doms\EnvironmentDom.class
+com\huiyi\plugin\Global.class
+com\huiyi\plugin\AutoMojo.class
 com\huiyi\plugin\doms\ProtoDom.class

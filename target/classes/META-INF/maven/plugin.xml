@@ -13,7 +13,7 @@
   <inheritedByDefault>true</inheritedByDefault>
   <mojos>
     <mojo>
-      <goal>android</goal>
+      <goal>auto</goal>
       <requiresDirectInvocation>false</requiresDirectInvocation>
       <requiresProject>true</requiresProject>
       <requiresReports>false</requiresReports>
@@ -21,7 +21,7 @@
       <requiresOnline>false</requiresOnline>
       <inheritedByDefault>true</inheritedByDefault>
       <phase>pre-integration-test</phase>
-      <implementation>com.huiyi.plugin.AndroidMojo</implementation>
+      <implementation>com.huiyi.plugin.AutoMojo</implementation>
       <language>java</language>
       <instantiationStrategy>per-lookup</instantiationStrategy>
       <executionStrategy>once-per-session</executionStrategy>
@@ -83,7 +83,7 @@
       </configuration>
     </mojo>
     <mojo>
-      <goal>all</goal>
+      <goal>android</goal>
       <requiresDirectInvocation>false</requiresDirectInvocation>
       <requiresProject>true</requiresProject>
       <requiresReports>false</requiresReports>
@@ -91,7 +91,7 @@
       <requiresOnline>false</requiresOnline>
       <inheritedByDefault>true</inheritedByDefault>
       <phase>pre-integration-test</phase>
-      <implementation>com.huiyi.plugin.AllMojo</implementation>
+      <implementation>com.huiyi.plugin.AndroidMojo</implementation>
       <language>java</language>
       <instantiationStrategy>per-lookup</instantiationStrategy>
       <executionStrategy>once-per-session</executionStrategy>
