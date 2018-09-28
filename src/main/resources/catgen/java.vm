@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by 123 (456) -->
+#set($environment = $environment)
+#set($models = $protoDom.getModelDoms())
+#set($baseParams = $protoDom.getBaseParamDoms())
+#set($controllers = $protoDom.getControllerDoms())
+#set($marcoFiles = $protoDom.getMarcoFileDoms())
+#set($controller_package = $environment.controller_package)
+#set($model_package = $environment.model_package)
+#set($marcos_package = $environment.marcos_package)
+<proto>
+#foreach($model in $models)
+    <file name="${tool.getPath($model_package)}${tool.getFileName($model.name)}.java">
+<![CDATA[
+${environment.notes}
+package ${model_package};
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+/**
+ * ${model.des}
+ */
+public class ${tool.baseType($model.name)} implements Serializable {
+#foreach($parameter in ${model.modelParameterDoms})
+    /**
+     * ${parameter.des}
+     */
+    private $tool.typeChange(${parameter.type}) ${parameter.name};
+
+#end
+#foreach($parameter in ${model.modelParameterDoms})
+    public $tool.typeChange(${parameter.type}) get$tool.toUpperCaseFirstOne(${parameter.name})() {
+        return ${parameter.name};
+    }
+
+    public void set$tool.toUpperCaseFirstOne(${parameter.name}) ($tool.typeChange(${parameter.type}) ${parameter.name}) {
+        this.${parameter.name} = ${parameter.name};
+    }
+#end
+
+    @Override
+    public boolean equals(Object that) {
+        if (this == that) {
+            return true;
+        }
+        if (that == null) {
+            return false;
+        }
+        if (getClass() != that.getClass()) {
+            return false;
+        }
+        ${tool.typeChange($model.name)} other = (${tool.typeChange($model.name)}) that;
+#set($once = 0)
+#set($count = $model.modelParameterDoms.size())
+#foreach($parameter in ${model.modelParameterDoms})
+#set($once = $once+1)
+#if($once == 1)
+#if($count == 1)
+        return (this.get$tool.toUpperCaseFirstOne(${parameter.name})() == null ? other.get$tool.toUpperCaseFirstOne(${parameter.name})() == null : this.get$tool.toUpperCaseFirstOne(${parameter.name})().equals(other.get$tool.toUpperCaseFirstOne(${parameter.name})()));
+#else
+        return (this.get$tool.toUpperCaseFirstOne(${parameter.name})() == null ? other.get$tool.toUpperCaseFirstOne(${parameter.name})() == null : this.get$tool.toUpperCaseFirstOne(${parameter.name})().equals(other.get$tool.toUpperCaseFirstOne(${parameter.name})()))
+#end
+#elseif($once == $count)
+        && (this.get$tool.toUpperCaseFirstOne(${parameter.name})() == null ? other.get$tool.toUpperCaseFirstOne(${parameter.name})() == null : this.get$tool.toUpperCaseFirstOne(${parameter.name})().equals(other.get$tool.toUpperCaseFirstOne(${parameter.name})()));
+#else
+        && (this.get$tool.toUpperCaseFirstOne(${parameter.name})() == null ? other.get$tool.toUpperCaseFirstOne(${parameter.name})() == null : this.get$tool.toUpperCaseFirstOne(${parameter.name})().equals(other.get$tool.toUpperCaseFirstOne(${parameter.name})()))
+#end
+#end
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+#foreach($parameter in ${model.modelParameterDoms})
+        result = prime * result + ((get$tool.toUpperCaseFirstOne(${parameter.name})() == null) ? 0 : get$tool.toUpperCaseFirstOne(${parameter.name})().hashCode());
+#end
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getSimpleName());
+        sb.append(" [");
+        sb.append("Hash = ").append(hashCode());
+#foreach($parameter in ${model.modelParameterDoms})
+        sb.append(", ${parameter.name}=").append(${parameter.name}==null?"null":${parameter.name}.toString());
+#end
+        sb.append("]");
+        return sb.toString();
+    }
+}
+]]>
+    </file>
+#end
+
+<file name="${tool.getPath($controller_package)}params/base/BaseParams.java">
+    <![CDATA[
+package ${controller_package}.params.base;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel
+public class BaseParams{
+#foreach($methodParameterDom in ${baseParams})
+    @ApiModelProperty("${methodParameterDom.des}")
+    private $tool.typeChange(${methodParameterDom.type}) ${methodParameterDom.name};
+#end
+
+#foreach($methodParameterDom in ${baseParams})
+    public $tool.typeChange(${methodParameterDom.type}) get$tool.toUpperCaseFirstOne(${methodParameterDom.name})() {
+        return ${methodParameterDom.name};
+    }
+
+    public void set$tool.toUpperCaseFirstOne(${methodParameterDom.name}) ($tool.typeChange(${methodParameterDom.type}) ${methodParameterDom.name}) {
+        this.${methodParameterDom.name} = ${methodParameterDom.name};
+    }
+#end
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getSimpleName());
+        sb.append(" [");
+#foreach($methodParameterDom in ${baseParams})
+        sb.append("${methodParameterDom.name}=").append(${methodParameterDom.name}==null?"null":${methodParameterDom.name}.toString());
+#end
+        sb.append("]");
+        return sb.toString();
+    }
+}
+    ]]>
+</file>
+
+#foreach($controller in $controllers)
+#foreach($method in ${controller.methodDoms})
+    <file name="${tool.getPath($controller_package)}params/${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params.java">
+        <![CDATA[
+package ${controller_package}.params;
+import ${controller_package}.params.base.BaseParams;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel
+public class ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params extends BaseParams {
+#foreach($methodParameterDom in ${method.methodParameterDoms})
+    @ApiModelProperty("${methodParameterDom.des}")
+    private $tool.typeChange(${methodParameterDom.type}) ${methodParameterDom.name};
+#end
+
+#foreach($methodParameterDom in ${method.methodParameterDoms})
+    public $tool.typeChange(${methodParameterDom.type}) get$tool.toUpperCaseFirstOne(${methodParameterDom.name})() {
+        return ${methodParameterDom.name};
+    }
+
+    public void set$tool.toUpperCaseFirstOne(${methodParameterDom.name}) ($tool.typeChange(${methodParameterDom.type}) ${methodParameterDom.name}) {
+        this.${methodParameterDom.name} = ${methodParameterDom.name};
+    }
+#end
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getSimpleName());
+        sb.append(" [");
+        sb.append(super.toString());
+#foreach($methodParameterDom in ${method.methodParameterDoms})
+        sb.append("${methodParameterDom.name}=").append(${methodParameterDom.name}==null?"null":${methodParameterDom.name}.toString());
+#end
+        sb.append("]");
+        return sb.toString();
+    }
+}
+        ]]>
+    </file>
+#end
+#end
+#foreach($controller in $controllers)
+    <file name="${tool.getPath($controller_package)}I${controller.name}.java">
+<![CDATA[
+${environment.notes}
+package ${controller_package};
+import ${model_package}.*;
+import io.swagger.annotations.*;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+import ${controller_package}.params.*;
+import java.util.List;
+@Api("${controller.des}")
+@RequestMapping("${controller.url}")
+public interface I${controller.name} {
+#foreach($method in ${controller.methodDoms})
+    /**
+    * ${method.des}
+    */
+    @ApiOperation(value = "${method.des}", httpMethod = "$tool.toUpper(${method.method})", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponse(code = 200, message = "success", response = ${tool.getTypeClass($method.rep)})
+    @$tool.toUpperCaseFirstOneOtherLow(${method.method})Mapping("${method.url}")
+
+#if(${method.methodParameterDoms.size()} == 0)
+    $tool.typeChange(${method.rep}) ${method.name}();
+#else
+    $tool.typeChange(${method.rep}) ${method.name}(${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params);
+#end
+#end
+}
+]]>
+    </file>
+#end
+
+#foreach($marcoFile in $marcoFiles)
+    <file name="${tool.getPath($marcos_package)}${marcoFile.name}.java">
+        <![CDATA[
+${environment.notes}
+package ${marcos_package};
+public class ${marcoFile.name} {
+#foreach($marco in ${marcoFile.marcoDoms})
+    /**
+     * ${marco.des};
+     */
+    public static final $tool.typeChange(${marco.type}) ${marco.name} = ${marco.value};
+#end
+}
+        ]]>
+    </file>
+#end
+</proto>
