@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by 123 (456) -->
+#set($environment = $environment)
+#set($models = $protoDom.getModelDoms())
+#set($controllers = $protoDom.getControllerDoms())
+#set($marcoFiles = $protoDom.getMarcoFileDoms())
+#set($baseParams = $protoDom.getBaseParamDoms())
+#set($controller_package = $environment.controller_package)
+#set($model_package = $environment.model_package)
+#set($marcos_package = $environment.marcos_package)
+<proto>
+#foreach($model in $models)
+    <file name="${tool.getPath($model_package)}${tool.getFileName($model.name)}.java">
+<![CDATA[
+${environment.notes}
+package ${model_package};
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+/**
+ * ${model.des}
+ */
+public class ${tool.baseType($model.name)} implements Serializable {
+#foreach($parameter in ${model.modelParameterDoms})
+    /**
+     * ${parameter.des}
+     */
+    private $tool.typeChange(${parameter.type}) ${parameter.name};
+
+#end
+#foreach($parameter in ${model.modelParameterDoms})
+    public $tool.typeChange(${parameter.type}) get$tool.toUpperCaseFirstOne(${parameter.name})() {
+        return ${parameter.name};
+    }
+
+    public void set$tool.toUpperCaseFirstOne(${parameter.name}) ($tool.typeChange(${parameter.type}) ${parameter.name}) {
+        this.${parameter.name} = ${parameter.name};
+    }
+#end
+
+    @Override
+    public boolean equals(Object that) {
+        if (this == that) {
+            return true;
+        }
+        if (that == null) {
+            return false;
+        }
+        if (getClass() != that.getClass()) {
+            return false;
+        }
+        ${tool.typeChange($model.name)} other = (${tool.typeChange($model.name)}) that;
+#set($once = 0)
+#set($count = $model.modelParameterDoms.size())
+#foreach($parameter in ${model.modelParameterDoms})
+#set($once = $once+1)
+#if($once == 1)
+#if($count == 1)
+        return (this.get$tool.toUpperCaseFirstOne(${parameter.name})() == null ? other.get$tool.toUpperCaseFirstOne(${parameter.name})() == null : this.get$tool.toUpperCaseFirstOne(${parameter.name})().equals(other.get$tool.toUpperCaseFirstOne(${parameter.name})()));
+#else
+        return (this.get$tool.toUpperCaseFirstOne(${parameter.name})() == null ? other.get$tool.toUpperCaseFirstOne(${parameter.name})() == null : this.get$tool.toUpperCaseFirstOne(${parameter.name})().equals(other.get$tool.toUpperCaseFirstOne(${parameter.name})()))
+#end
+#elseif($once == $count)
+        && (this.get$tool.toUpperCaseFirstOne(${parameter.name})() == null ? other.get$tool.toUpperCaseFirstOne(${parameter.name})() == null : this.get$tool.toUpperCaseFirstOne(${parameter.name})().equals(other.get$tool.toUpperCaseFirstOne(${parameter.name})()));
+#else
+        && (this.get$tool.toUpperCaseFirstOne(${parameter.name})() == null ? other.get$tool.toUpperCaseFirstOne(${parameter.name})() == null : this.get$tool.toUpperCaseFirstOne(${parameter.name})().equals(other.get$tool.toUpperCaseFirstOne(${parameter.name})()))
+#end
+#end
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+#foreach($parameter in ${model.modelParameterDoms})
+        result = prime * result + ((get$tool.toUpperCaseFirstOne(${parameter.name})() == null) ? 0 : get$tool.toUpperCaseFirstOne(${parameter.name})().hashCode());
+#end
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getSimpleName());
+        sb.append(" [");
+        sb.append("Hash = ").append(hashCode());
+#foreach($parameter in ${model.modelParameterDoms})
+        sb.append(", ${parameter.name}=").append(${parameter.name}==null?"null":${parameter.name}.toString());
+#end
+        sb.append("]");
+        return sb.toString();
+    }
+}
+]]>
+    </file>
+
+#end
+
+    <file name="${tool.getPath($controller_package)}HttpManager.java">
+<![CDATA[
+${environment.notes}
+package ${controller_package};
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import com.alibaba.fastjson.JSONObject;
+import retrofit2.mock.MockRetrofit;
+import retrofit2.mock.NetworkBehavior;
+import java.util.concurrent.TimeUnit;
+
+public class HttpManager {
+    private static HttpManager instance;
+    private static HttpGetBaseParams getBaseParams;
+#foreach($controller in $controllers)
+    private ${tool.toUpperCaseFirstOne($controller.name)}HttpManager m${tool.toUpperCaseFirstOne($controller.name)}HttpManager;
+#end
+    public static void setGetBaseParams(HttpGetBaseParams getBaseParams){
+        HttpManager.getBaseParams = getBaseParams;
+    }
+
+    public static HttpManager getInstance() {
+        if (HttpManager.instance == null) {
+            HttpManager.instance = new HttpManager(HttpManager.getBaseParams);
+        }
+        return HttpManager.instance;
+    }
+    public HttpManager(HttpGetBaseParams getBaseParamsImpl) {
+        String baseUrl = "http://localhost:8080/";
+        Retrofit retrofit = new Retrofit.Builder()
+        .addConverterFactory(GsonConverterFactory.create())
+        //.addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+        .baseUrl(baseUrl)
+        .build();
+        NetworkBehavior behavior = NetworkBehavior.create();
+        behavior.setDelay(500, TimeUnit.MILLISECONDS);
+        MockRetrofit mockRetrofit = new MockRetrofit.Builder(retrofit)
+        .networkBehavior(behavior)
+        .build();
+#foreach($controller in $controllers)
+        m${tool.toUpperCaseFirstOne($controller.name)}HttpManager = new ${tool.toUpperCaseFirstOne($controller.name)}HttpManager(retrofit,mockRetrofit);
+#end
+    }
+#foreach($controller in $controllers)
+    public ${tool.toUpperCaseFirstOne($controller.name)}HttpManager get${tool.toUpperCaseFirstOne($controller.name)}HttpManager() {
+        return m${tool.toUpperCaseFirstOne($controller.name)}HttpManager;
+    }
+#end
+    public JSONObject getBaseParam() {
+        JSONObject jsonParams = new JSONObject();
+#foreach($baseParam in $baseParams)
+        jsonParams.put("${baseParam.name}", getBaseParams.get${tool.toUpperCaseFirstOne($baseParam.name)}());
+#end
+        return jsonParams;
+    }
+}
+]]>
+    </file>
+
+#foreach($controller in $controllers)
+    <file name="${tool.getPath($controller_package)}${tool.toUpperCaseFirstOne($controller.name)}Service.java">
+        <![CDATA[
+package ${controller_package};
+
+import com.alibaba.fastjson.JSONObject;
+import ${model_package}.*;
+import retrofit2.Call;
+import retrofit2.http.*;
+import java.util.List;
+public interface ${tool.toUpperCaseFirstOne($controller.name)}Service {
+#foreach($method in $controller.methodDoms)
+    /**
+     * $method.des
+     *
+     * @param jsonParams
+     * @return
+     */
+    @${tool.toUpper($method.method)}("${controller.url}/${method.url}")
+    Call<${tool.typeChange($method.rep)}> ${method.name}(@Body JSONObject jsonParams);
+#end
+}
+        ]]>
+    </file>
+
+    <file name="${tool.getPath($controller_package)}Mock${tool.toUpperCaseFirstOne($controller.name)}Service.java">
+        <![CDATA[
+package ${controller_package};
+
+import com.alibaba.fastjson.JSONObject;
+import ${model_package}.*;
+import retrofit2.Call;
+import retrofit2.http.*;
+import retrofit2.mock.BehaviorDelegate;
+import java.util.List;
+import java.util.HashMap;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
+
+public class Mock${tool.toUpperCaseFirstOne($controller.name)}Service implements ${tool.toUpperCaseFirstOne($controller.name)}Service {
+    private final BehaviorDelegate<${tool.toUpperCaseFirstOne($controller.name)}Service> delegate;
+    private HashMap<String,Object> hashMap;
+    private Gson gson;
+    Mock${tool.toUpperCaseFirstOne($controller.name)}Service(BehaviorDelegate<${tool.toUpperCaseFirstOne($controller.name)}Service> delegate){
+        this.delegate = delegate;
+        this.hashMap = new HashMap<>();
+        this.gson = new Gson();
+    }
+    public Boolean hasMock(String url){
+        return hashMap.containsKey(url);
+    }
+#foreach($method in $controller.methodDoms)
+    @Override
+    public Call<${tool.typeChange($method.rep)}> ${method.name}(JSONObject jsonParams) {
+        return delegate.returningResponse(hashMap.get("${method.name}")).${method.name}(jsonParams);
+    }
+    public void set${tool.toUpperCaseFirstOne($method.name)}Response(${tool.typeChange($method.rep)} response){
+        hashMap.put("${method.name}",response);
+    }
+    public void set${tool.toUpperCaseFirstOne($method.name)}Response(String response){
+        Type type = new TypeToken<${tool.typeChange($method.rep)}>(){}.getType();
+        ${tool.typeChange($method.rep)} responseObject = gson.fromJson(response,type);
+        hashMap.put("${method.name}",responseObject);
+    }
+#end
+}
+        ]]>
+    </file>
+#end
+
+#foreach($controller in $controllers)
+    <file name="${tool.getPath($controller_package)}${tool.toUpperCaseFirstOne($controller.name)}HttpManager.java">
+        <![CDATA[
+package ${controller_package};
+import com.alibaba.fastjson.JSONObject;
+import ${model_package}.*;
+import retrofit2.Call;
+import retrofit2.Retrofit;
+import java.util.List;
+import retrofit2.mock.MockRetrofit;
+
+public class ${tool.toUpperCaseFirstOne($controller.name)}HttpManager{
+    private final ${tool.toUpperCaseFirstOne($controller.name)}Service m${tool.toUpperCaseFirstOne($controller.name)}Service;
+    private final Mock${tool.toUpperCaseFirstOne($controller.name)}Service mMock${tool.toUpperCaseFirstOne($controller.name)}Service;
+    public ${tool.toUpperCaseFirstOne($controller.name)}HttpManager(Retrofit retrofit, MockRetrofit mockRetrofit) {
+        m${tool.toUpperCaseFirstOne($controller.name)}Service = retrofit.create(${tool.toUpperCaseFirstOne($controller.name)}Service.class);
+        mMock${tool.toUpperCaseFirstOne($controller.name)}Service = new Mock${tool.toUpperCaseFirstOne($controller.name)}Service(mockRetrofit.create(${tool.toUpperCaseFirstOne($controller.name)}Service.class));
+    }
+#foreach($method in $controller.methodDoms)
+    /**
+    * $method.des
+    *
+#foreach($methodParameterDom in $method.methodParameterDoms)
+    * @param $methodParameterDom.name $methodParameterDom.des
+#end
+    * @return
+    */
+#set($methodParameters = $tool.newStrings())
+#foreach($methodParameterDom in $method.methodParameterDoms)
+#set($temp = $methodParameters.add($tool.format("{0} {1}",$tool.typeChange($methodParameterDom.type),$methodParameterDom.name)))
+#end
+#set($methodParametersString = $tool.explode($methodParameters,","))
+    public Call<${tool.typeChange($method.rep)}> ${method.name}($methodParametersString) {
+        JSONObject jsonParams = HttpManager.getInstance().getBaseParam();;
+#foreach($methodParameterDom in $method.methodParameterDoms)
+        jsonParams.put("$methodParameterDom.name", $methodParameterDom.name);
+#end
+        if (mMock${tool.toUpperCaseFirstOne($controller.name)}Service.hasMock("${method.name}")) {
+            return mMock${tool.toUpperCaseFirstOne($controller.name)}Service.${method.name}(jsonParams);
+        }
+        return m${tool.toUpperCaseFirstOne($controller.name)}Service.${method.name}(jsonParams);
+    }
+
+    public void mock${tool.toUpperCaseFirstOne($method.name)}Response(${tool.typeChange($method.rep)} response) {
+        mMock${tool.toUpperCaseFirstOne($controller.name)}Service.set${tool.toUpperCaseFirstOne($method.name)}Response(response);
+    }
+    public void mock${tool.toUpperCaseFirstOne($method.name)}Response(String response) {
+        mMock${tool.toUpperCaseFirstOne($controller.name)}Service.set${tool.toUpperCaseFirstOne($method.name)}Response(response);
+    }
+#end
+}
+        ]]>
+    </file>
+#end
+
+
+#foreach($marcoFile in $marcoFiles)
+    <file name="${tool.getPath($marcos_package)}/${marcoFile.name}.java">
+        <![CDATA[
+${environment.notes}
+package ${marcos_package};
+public class ${marcoFile.name} {
+#foreach($marco in ${marcoFile.marcoDoms})
+    /**
+     * ${marco.des};
+     */
+    public static final $tool.typeChange(${marco.type}) ${marco.name} = ${marco.value};
+#end
+}
+        ]]>
+    </file>
+#end
+    <file name="${tool.getPath($controller_package)}/HttpGetBaseParams.java">
+package ${controller_package};
+
+public interface HttpGetBaseParams {
+#foreach($baseParam in $baseParams)
+    ${tool.typeChange($baseParam.type)} get${tool.toUpperCaseFirstOne($baseParam.name)}();
+#end
+}
+    </file>
+</proto>

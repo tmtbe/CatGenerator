@@ -1,0 +1,15 @@
+com\huiyi\plugin\doms\MethodDom.class
+com\huiyi\plugin\doms\MethodParameterDom.class
+com\huiyi\plugin\doms\ReadProto.class
+com\huiyi\plugin\doms\MarcoDom.class
+com\huiyi\plugin\doms\Help.class
+com\huiyi\plugin\doms\ModelParameterDom.class
+com\huiyi\plugin\tools\JavaTool.class
+com\huiyi\plugin\tools\JsTool.class
+com\huiyi\plugin\doms\EnvironmentDom.class
+com\huiyi\plugin\tools\BaseTools.class
+com\huiyi\plugin\doms\ModelDom.class
+com\huiyi\plugin\doms\MarcoFileDom.class
+com\huiyi\plugin\doms\ControllerDom.class
+com\huiyi\plugin\GenMojo.class
+com\huiyi\plugin\doms\ProtoDom.class
