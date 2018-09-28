@@ -13,7 +13,7 @@
   <inheritedByDefault>true</inheritedByDefault>
   <mojos>
     <mojo>
-      <goal>java</goal>
+      <goal>all</goal>
       <requiresDirectInvocation>false</requiresDirectInvocation>
       <requiresProject>true</requiresProject>
       <requiresReports>false</requiresReports>
@@ -21,7 +21,7 @@
       <requiresOnline>false</requiresOnline>
       <inheritedByDefault>true</inheritedByDefault>
       <phase>pre-integration-test</phase>
-      <implementation>com.huiyi.plugin.JavaMojo</implementation>
+      <implementation>com.huiyi.plugin.AllMojo</implementation>
       <language>java</language>
       <instantiationStrategy>per-lookup</instantiationStrategy>
       <executionStrategy>once-per-session</executionStrategy>
@@ -48,7 +48,7 @@
       </configuration>
     </mojo>
     <mojo>
-      <goal>all</goal>
+      <goal>oc</goal>
       <requiresDirectInvocation>false</requiresDirectInvocation>
       <requiresProject>true</requiresProject>
       <requiresReports>false</requiresReports>
@@ -56,7 +56,7 @@
       <requiresOnline>false</requiresOnline>
       <inheritedByDefault>true</inheritedByDefault>
       <phase>pre-integration-test</phase>
-      <implementation>com.huiyi.plugin.AllMojo</implementation>
+      <implementation>com.huiyi.plugin.OcMojo</implementation>
       <language>java</language>
       <instantiationStrategy>per-lookup</instantiationStrategy>
       <executionStrategy>once-per-session</executionStrategy>
@@ -188,7 +188,7 @@
       </configuration>
     </mojo>
     <mojo>
-      <goal>oc</goal>
+      <goal>java</goal>
       <requiresDirectInvocation>false</requiresDirectInvocation>
       <requiresProject>true</requiresProject>
       <requiresReports>false</requiresReports>
@@ -196,7 +196,7 @@
       <requiresOnline>false</requiresOnline>
       <inheritedByDefault>true</inheritedByDefault>
       <phase>pre-integration-test</phase>
-      <implementation>com.huiyi.plugin.OcMojo</implementation>
+      <implementation>com.huiyi.plugin.JavaMojo</implementation>
       <language>java</language>
       <instantiationStrategy>per-lookup</instantiationStrategy>
       <executionStrategy>once-per-session</executionStrategy>
