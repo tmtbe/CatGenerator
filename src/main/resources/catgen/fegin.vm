@@ -20,6 +20,8 @@ package ${model_package};
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.lang.reflect.Field;
+
 /**
  * ${model.des}
  */
@@ -96,7 +98,7 @@ public class ${tool.baseType($model.name)} implements Serializable {
     }
 
     /**
-     * 从一个DB对象中取值
+     * Assign From DB Model
      * @param obj
      */
     public void assignFromDBModel(Object obj)  {

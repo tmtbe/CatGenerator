@@ -143,6 +143,7 @@ package ${params_package};
 import ${params_package}.base.BaseParams;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.lang.reflect.Field;
 
 @ApiModel
 public class ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params extends BaseParams {
@@ -173,7 +174,7 @@ public class ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params e
         return sb.toString();
     }
     /**
-     * 从一个DB对象中取值
+     * Assign From DB Model
      * @param obj
      */
     public void assignFromDBModel(Object obj)  {
