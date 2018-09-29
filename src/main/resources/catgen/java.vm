@@ -8,6 +8,8 @@
 #set($controller_package = $environment.controller_package)
 #set($model_package = $environment.model_package)
 #set($marcos_package = $environment.marcos_package)
+#set($params_package = $environment.params_package)
+
 <proto>
 #foreach($model in $models)
     <file name="${tool.getPath($model_package)}${tool.getFileName($model.name)}.java">
@@ -95,9 +97,9 @@ public class ${tool.baseType($model.name)} implements Serializable {
     </file>
 #end
 
-<file name="${tool.getPath($controller_package)}params/base/BaseParams.java">
+<file name="${tool.getPath($params_package)}base/BaseParams.java">
     <![CDATA[
-package ${controller_package}.params.base;
+package ${params_package}.base;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -134,10 +136,10 @@ public class BaseParams{
 
 #foreach($controller in $controllers)
 #foreach($method in ${controller.methodDoms})
-    <file name="${tool.getPath($controller_package)}params/${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params.java">
+    <file name="${tool.getPath($params_package)}${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params.java">
         <![CDATA[
-package ${controller_package}.params;
-import ${controller_package}.params.base.BaseParams;
+package ${params_package};
+import ${params_package}.base.BaseParams;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -183,7 +185,7 @@ import ${model_package}.*;
 import io.swagger.annotations.*;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import ${controller_package}.params.*;
+import ${params_package}.*;
 import java.util.List;
 @Api("${controller.des}")
 @RequestMapping("${controller.url}")

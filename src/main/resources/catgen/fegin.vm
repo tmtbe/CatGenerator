@@ -8,12 +8,99 @@
 #set($controller_package = $environment.controller_package)
 #set($model_package = $environment.model_package)
 #set($marcos_package = $environment.marcos_package)
+#set($params_package = $environment.params_package)
+
 #set($service_name = $protoDom.file_name)
 <proto>
+#foreach($model in $models)
+    <file name="${tool.getPath($model_package)}${tool.getFileName($model.name)}.java">
+<![CDATA[
+${environment.notes}
+package ${model_package};
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+/**
+ * ${model.des}
+ */
+public class ${tool.baseType($model.name)} implements Serializable {
+#foreach($parameter in ${model.modelParameterDoms})
+    /**
+     * ${parameter.des}
+     */
+    private $tool.typeChange(${parameter.type}) ${parameter.name};
 
-<file name="${tool.getPath($controller_package)}params/base/BaseParams.java">
+#end
+#foreach($parameter in ${model.modelParameterDoms})
+    public $tool.typeChange(${parameter.type}) get$tool.toUpperCaseFirstOne(${parameter.name})() {
+        return ${parameter.name};
+    }
+
+    public void set$tool.toUpperCaseFirstOne(${parameter.name}) ($tool.typeChange(${parameter.type}) ${parameter.name}) {
+        this.${parameter.name} = ${parameter.name};
+    }
+#end
+
+    @Override
+    public boolean equals(Object that) {
+        if (this == that) {
+            return true;
+        }
+        if (that == null) {
+            return false;
+        }
+        if (getClass() != that.getClass()) {
+            return false;
+        }
+        ${tool.typeChange($model.name)} other = (${tool.typeChange($model.name)}) that;
+#set($once = 0)
+#set($count = $model.modelParameterDoms.size())
+#foreach($parameter in ${model.modelParameterDoms})
+#set($once = $once+1)
+#if($once == 1)
+#if($count == 1)
+        return (this.get$tool.toUpperCaseFirstOne(${parameter.name})() == null ? other.get$tool.toUpperCaseFirstOne(${parameter.name})() == null : this.get$tool.toUpperCaseFirstOne(${parameter.name})().equals(other.get$tool.toUpperCaseFirstOne(${parameter.name})()));
+#else
+        return (this.get$tool.toUpperCaseFirstOne(${parameter.name})() == null ? other.get$tool.toUpperCaseFirstOne(${parameter.name})() == null : this.get$tool.toUpperCaseFirstOne(${parameter.name})().equals(other.get$tool.toUpperCaseFirstOne(${parameter.name})()))
+#end
+#elseif($once == $count)
+        && (this.get$tool.toUpperCaseFirstOne(${parameter.name})() == null ? other.get$tool.toUpperCaseFirstOne(${parameter.name})() == null : this.get$tool.toUpperCaseFirstOne(${parameter.name})().equals(other.get$tool.toUpperCaseFirstOne(${parameter.name})()));
+#else
+        && (this.get$tool.toUpperCaseFirstOne(${parameter.name})() == null ? other.get$tool.toUpperCaseFirstOne(${parameter.name})() == null : this.get$tool.toUpperCaseFirstOne(${parameter.name})().equals(other.get$tool.toUpperCaseFirstOne(${parameter.name})()))
+#end
+#end
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+#foreach($parameter in ${model.modelParameterDoms})
+        result = prime * result + ((get$tool.toUpperCaseFirstOne(${parameter.name})() == null) ? 0 : get$tool.toUpperCaseFirstOne(${parameter.name})().hashCode());
+#end
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getSimpleName());
+        sb.append(" [");
+        sb.append("Hash = ").append(hashCode());
+#foreach($parameter in ${model.modelParameterDoms})
+        sb.append(", ${parameter.name}=").append(${parameter.name}==null?"null":${parameter.name}.toString());
+#end
+        sb.append("]");
+        return sb.toString();
+    }
+}
+]]>
+    </file>
+#end
+
+<file name="${tool.getPath($params_package)}base/BaseParams.java">
     <![CDATA[
-package ${controller_package}.params.base;
+package ${params_package}.base;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -50,10 +137,10 @@ public class BaseParams{
 
 #foreach($controller in $controllers)
 #foreach($method in ${controller.methodDoms})
-    <file name="${tool.getPath($controller_package)}params/${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params.java">
+    <file name="${tool.getPath($params_package)}${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params.java">
         <![CDATA[
-package ${controller_package}.params;
-import ${controller_package}.params.base.BaseParams;
+package ${params_package};
+import ${params_package}.base.BaseParams;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -98,7 +185,7 @@ package ${controller_package};
 import ${model_package}.*;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import ${controller_package}.params.*;
+import ${params_package}.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import java.util.List;
 
