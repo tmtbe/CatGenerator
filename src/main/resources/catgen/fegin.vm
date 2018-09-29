@@ -24,7 +24,6 @@ import java.util.List;
  * ${model.des}
  */
 public class ${tool.baseType($model.name)} implements Serializable {
-    private static final long serialVersionUID = 1L;
 #foreach($parameter in ${model.modelParameterDoms})
     /**
      * ${parameter.des}
