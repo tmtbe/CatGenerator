@@ -207,5 +207,53 @@ public interface ${controller.name}Client {
     </file>
 #end
 
+#foreach($controller in $controllers)
+    <file name="${tool.getPath($controller_package)}${controller.name}FallBackFactory.java">
+        <![CDATA[
+${environment.notes}
+package ${controller_package};
+import ${model_package}.*;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+import ${params_package}.*;
+import java.util.List;
+import feign.hystrix.FallbackFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
+@Component
+public class ${controller.name}FallBackFactory implements FallbackFactory<${controller.name}Client>{
+    private static final Logger LOGGER = LoggerFactory.getLogger(${controller.name}FallBackFactory.class);
+#foreach($method in ${controller.methodDoms})
+    private static $tool.typeChange(${method.rep}) ${method.name}Result;
+
+    public static void set$tool.toUpperCaseFirstOne(${method.name})Result($tool.typeChange(${method.rep}) ${method.name}Result) {
+        ${controller.name}FallBackFactory.${method.name}Result = ${method.name}Result;
+    }
+
+#end
+    @Override
+    public ${controller.name}Client create(Throwable throwable) {
+        ${controller.name}FallBackFactory.LOGGER.info("fallback; reason was: {}", throwable.getMessage());
+        return new AccountControllerClient() {
+#foreach($method in ${controller.methodDoms})
+           /**
+            * ${method.des}
+            */
+            @Override
+#if(${method.methodParameterDoms.size()} == 0)
+            public $tool.typeChange(${method.rep}) ${method.name}(){
+#else
+            public $tool.typeChange(${method.rep}) ${method.name}(@RequestBody ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params){
+#end
+                return ${method.name}Result;
+            }
+#end
+        };
+    }
+}
+        ]]>
+    </file>
+#end
 </proto>
