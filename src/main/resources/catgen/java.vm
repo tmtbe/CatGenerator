@@ -172,6 +172,26 @@ public class ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params e
         sb.append("]");
         return sb.toString();
     }
+    /**
+     * 从一个DB对象中取值
+     * @param obj
+     */
+    public void assignFromDBModel(Object obj)  {
+        Field[] newFields = getClass().getDeclaredFields();
+        Field oldField;
+        for (Field newField : newFields){
+            newField.setAccessible(true);
+            try {
+                oldField = getClass().getDeclaredField(newField.getName());
+                oldField.setAccessible(true);
+                newField.set(this,oldField.get(obj));
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
         ]]>
     </file>
