@@ -189,7 +189,7 @@ import ${params_package}.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import java.util.List;
 
-@FeignClient(name = "${service_name}")
+@FeignClient(name = "${service_name}",fallbackFactory = ${controller.name}FallBackFactory.class)
 @RequestMapping("${controller.url}")
 public interface ${controller.name}Client {
 #foreach($method in ${controller.methodDoms})
