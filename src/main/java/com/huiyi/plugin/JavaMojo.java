@@ -55,7 +55,8 @@ public class JavaMojo extends AbstractMojo {
         try {
             readProto.run(getLog(),"java");
         } catch (Exception e) {
-            getLog().error(e);
+            e.printStackTrace();
+            throw new MojoExecutionException("编译错误");
         }
     }
 }

@@ -56,6 +56,7 @@ public class OcMojo extends AbstractMojo {
             readProto.run(getLog(),"oc");
         } catch (Exception e) {
             getLog().error(e);
+            throw new MojoExecutionException("编译错误");
         }
     }
 }

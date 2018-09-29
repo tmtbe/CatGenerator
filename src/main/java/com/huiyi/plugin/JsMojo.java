@@ -56,6 +56,7 @@ public class JsMojo extends AbstractMojo {
             readProto.run(getLog(),"js");
         } catch (Exception e) {
             getLog().error(e);
+            throw new MojoExecutionException("编译错误");
         }
     }
 }

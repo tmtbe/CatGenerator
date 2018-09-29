@@ -56,6 +56,7 @@ public class AndroidMojo extends AbstractMojo {
             readProto.run(getLog(),"android");
         } catch (Exception e) {
             getLog().error(e);
+            throw new MojoExecutionException("编译错误");
         }
     }
 }

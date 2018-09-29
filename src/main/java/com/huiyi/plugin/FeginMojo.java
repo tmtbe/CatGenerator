@@ -56,6 +56,7 @@ public class FeginMojo extends AbstractMojo {
             readProto.run(getLog(),"fegin");
         } catch (Exception e) {
             getLog().error(e);
+            throw new MojoExecutionException("编译错误");
         }
     }
 }

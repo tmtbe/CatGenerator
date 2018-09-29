@@ -45,7 +45,7 @@ public class AutoMojo extends AbstractMojo {
         run(filepath, "js");
     }
 
-    private void run(String filepath, String environmentName) {
+    private void run(String filepath, String environmentName) throws MojoExecutionException {
         ReadProto readProto = new ReadProto();
         File file = new File(filepath);
         if (!file.isDirectory()) {  //通过isDirectory()判断当前路径是不是文件夹
@@ -77,6 +77,7 @@ public class AutoMojo extends AbstractMojo {
             readProto.run(getLog(), environmentName);
         } catch (Exception e) {
             getLog().error(e);
+            throw new MojoExecutionException("编译错误");
         }
     }
 }
