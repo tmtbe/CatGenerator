@@ -19,6 +19,7 @@ package ${model_package};
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.lang.reflect.Field;
 /**
  * ${model.des}
  */
@@ -93,6 +94,26 @@ public class ${tool.baseType($model.name)} implements Serializable {
         sb.append("]");
         return sb.toString();
     }
+    /**
+     * Assign From DBModel
+     * @param obj
+    */
+    public void assignFromDBModel(Object obj)  {
+        Field[] newFields = getClass().getDeclaredFields();
+        Field oldField;
+        for (Field newField : newFields){
+            newField.setAccessible(true);
+            try {
+                oldField = getClass().getDeclaredField(newField.getName());
+                oldField.setAccessible(true);
+                newField.set(this,oldField.get(obj));
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
 ]]>
     </file>
@@ -143,7 +164,6 @@ package ${params_package};
 import ${params_package}.base.BaseParams;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.lang.reflect.Field;
 
 @ApiModel
 public class ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params extends BaseParams {
@@ -172,26 +192,6 @@ public class ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params e
 #end
         sb.append("]");
         return sb.toString();
-    }
-    /**
-     * Assign From DB Model
-     * @param obj
-     */
-    public void assignFromDBModel(Object obj)  {
-        Field[] newFields = getClass().getDeclaredFields();
-        Field oldField;
-        for (Field newField : newFields){
-            newField.setAccessible(true);
-            try {
-                oldField = getClass().getDeclaredField(newField.getName());
-                oldField.setAccessible(true);
-                newField.set(this,oldField.get(obj));
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
     }
 }
         ]]>
