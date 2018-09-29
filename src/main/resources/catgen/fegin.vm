@@ -198,8 +198,7 @@ public interface ${controller.name}Client {
     */
     @$tool.toUpperCaseFirstOneOtherLow(${method.method})Mapping("${method.url}")
 #if(${method.methodParameterDoms.size()} == 0)
-    $tool.typeChange(${method.rep}) ${method.name}();
-#else
+    $tool.typeChange(${method.rep}) ${method.name}(); #else
     $tool.typeChange(${method.rep}) ${method.name}(@RequestBody ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params);
 #end
 #end
