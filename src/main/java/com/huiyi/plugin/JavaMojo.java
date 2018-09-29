@@ -44,7 +44,7 @@ public class JavaMojo extends AbstractMojo {
         } else if (file.isDirectory()) {
             String[] filelist = file.list();
             for (int i = 0; i < filelist.length; i++) {
-                File readfile = new File(filepath + "\\" + filelist[i]);    //将输入路径及其子路径相连接
+                File readfile = new File(filepath + "/" + filelist[i]);    //将输入路径及其子路径相连接
                 if (!readfile.isDirectory()) {
                     if (filelist[i].endsWith(".xml")) {
                         readProto.addXml(readfile);
