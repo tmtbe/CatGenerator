@@ -98,20 +98,13 @@ public class ${tool.baseType($model.name)} implements Serializable {
      * @param obj
     */
     public void assignFromDBModel(Object obj)  {
-        Field[] newFields = getClass().getDeclaredFields();
-        Field oldField;
-        for (Field newField : newFields){
-            newField.setAccessible(true);
-            try {
-                oldField = getClass().getDeclaredField(newField.getName());
-                oldField.setAccessible(true);
-                newField.set(this,oldField.get(obj));
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
+#foreach($parameter in ${model.modelParameterDoms})
+        try {
+            ${parameter.name} = ($tool.typeChange(${parameter.type})) obj.getClass().getDeclaredMethod("get$tool.toUpperCaseFirstOne($parameter.name)").invoke(obj);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+#end
     }
 }
 ]]>
