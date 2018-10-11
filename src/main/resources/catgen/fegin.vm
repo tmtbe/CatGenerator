@@ -241,7 +241,7 @@ public class ${controller.name}FallBackFactory implements FallbackFactory<${cont
     @Override
     public ${controller.name}Client create(Throwable throwable) {
         ${controller.name}FallBackFactory.LOGGER.info("fallback; reason was: {}", throwable.getMessage());
-        return new AccountControllerClient() {
+        return new ${controller.name}Client() {
 #foreach($method in ${controller.methodDoms})
            /**
             * ${method.des}
