@@ -133,9 +133,11 @@ public class ProtoDom {
                     modelDoms.add(needModel);
                 } else {
                     //寻找需要的model并添加进来
-                    ModelDom needModel = modelDomMap.get(methodDom.getRep());
+                    String bastype = javaTool.baseType(methodDom.getRep());
+                    if(javaTool.isBaseType(bastype)) continue;
+                    ModelDom needModel = modelDomMap.get(bastype);
                     if (needModel == null) {
-                        throw new Exception(methodDom.getRep() + "->没有找到对应的Model");
+                        throw new Exception(javaTool.baseType(methodDom.getRep()) + "->没有找到对应的Model");
                     }
                     modelDoms.add(needModel);
                 }
