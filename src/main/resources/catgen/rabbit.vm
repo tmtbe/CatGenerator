@@ -62,18 +62,18 @@ public class ${controller.name}ProducerTemplate {
 
     <file name="${tool.getPath($params_package)}base/BaseParams.java">
         <![CDATA[
-        package ${params_package}.base;
-        import io.swagger.annotations.ApiModel;
-        import io.swagger.annotations.ApiModelProperty;
-        import lombok.Data;
-        @Data
-        @ApiModel
-        public class BaseParams{
-    #foreach($methodParameterDom in ${baseParams})
-            @ApiModelProperty("${methodParameterDom.des}")
-            private $tool.typeChange(${methodParameterDom.type}) ${methodParameterDom.name};
-    #end
-        }
+package ${params_package}.base;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+@Data
+@ApiModel
+public class BaseParams{
+#foreach($methodParameterDom in ${baseParams})
+    @ApiModelProperty("${methodParameterDom.des}")
+    private $tool.typeChange(${methodParameterDom.type}) ${methodParameterDom.name};
+#end
+}
         ]]>
     </file>
 
