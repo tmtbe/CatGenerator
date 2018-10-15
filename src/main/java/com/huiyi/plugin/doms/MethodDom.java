@@ -13,7 +13,7 @@ public class MethodDom implements Cloneable {
     private String name;
     private String url;
     private String method;
-    private String rep;
+    private String rep = "";
     private String des;
     private ArrayList<MethodParameterDom> methodParameterDoms;
 

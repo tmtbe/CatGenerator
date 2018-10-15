@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by 123 (456) -->
+#set($environment = $environment)
+#set($models = $protoDom.getModelDoms())
+#set($baseParams = $protoDom.getBaseParamDoms())
+#set($controllers = $protoDom.getControllerDoms())
+#set($marcoFiles = $protoDom.getMarcoFileDoms())
+#set($controller_package = $environment.controller_package)
+#set($model_package = $environment.model_package)
+#set($marcos_package = $environment.marcos_package)
+#set($params_package = $environment.params_package)
+
+#set($service_name = $protoDom.file_name)
+<proto>
+#foreach($controller in $controllers)
+    <file name="${tool.getPath($controller_package)}${controller.name}Consumer.java">
+        <![CDATA[
+${environment.notes}
+package ${controller_package};
+import ${model_package}.*;
+import ${params_package}.*;
+import java.util.List;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.stereotype.Component;
+
+@Component
+public interface ${controller.name}Consumer {
+#foreach($method in ${controller.methodDoms})
+    @RabbitListener(queues = "${method.name}")
+    void ${method.name}(${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params);
+#end
+}
+        ]]>
+    </file>
+    <file name="${tool.getPath($controller_package)}${controller.name}ProducerTemplate.java">
+        <![CDATA[
+${environment.notes}
+package ${controller_package};
+import ${model_package}.*;
+import ${params_package}.*;
+import java.util.List;
+import org.springframework.amqp.core.AmqpTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@Component
+public class ${controller.name}ProducerTemplate {
+    @Autowired
+    private AmqpTemplate amqpTemplate;
+#foreach($method in ${controller.methodDoms})
+    /**
+     * ${method.des}
+     */
+    public void ${method.name}(${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params) {
+        amqpTemplate.convertAndSend("${method.name}", m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params);
+    }
+#end
+}
+        ]]>
+    </file>
+#end
+
+    <file name="${tool.getPath($params_package)}base/BaseParams.java">
+        <![CDATA[
+        package ${params_package}.base;
+        import io.swagger.annotations.ApiModel;
+        import io.swagger.annotations.ApiModelProperty;
+        import lombok.Data;
+        @Data
+        @ApiModel
+        public class BaseParams{
+    #foreach($methodParameterDom in ${baseParams})
+            @ApiModelProperty("${methodParameterDom.des}")
+            private $tool.typeChange(${methodParameterDom.type}) ${methodParameterDom.name};
+    #end
+        }
+        ]]>
+    </file>
+
+#foreach($controller in $controllers)
+#foreach($method in ${controller.methodDoms})
+    <file name="${tool.getPath($params_package)}${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params.java">
+        <![CDATA[
+        package ${params_package};
+        import ${params_package}.base.BaseParams;
+        import io.swagger.annotations.ApiModel;
+        import io.swagger.annotations.ApiModelProperty;
+        import lombok.Data;
+        import lombok.AllArgsConstructor;
+        import lombok.NoArgsConstructor;
+        @Data
+        @AllArgsConstructor
+        @NoArgsConstructor
+        @ApiModel
+        public class ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params extends BaseParams {
+    #foreach($methodParameterDom in ${method.methodParameterDoms})
+            @ApiModelProperty("${methodParameterDom.des}")
+            private $tool.typeChange(${methodParameterDom.type}) ${methodParameterDom.name};
+    #end
+        }
+        ]]>
+    </file>
+#end
+#end
+</proto>

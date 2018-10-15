@@ -114,6 +114,7 @@ public class ProtoDom {
             ControllerDom clone = (ControllerDom) controllerDom.clone();
             compatibleGenericsControllerDoms.add(clone);
             for (MethodDom methodDom : clone.getMethodDoms()) {
+                if(methodDom.getRep().equals("")) continue;
                 int index = methodDom.getRep().indexOf("{");
                 if (index > 0) {
                     String baseClass = methodDom.getRep().substring(0, index);
