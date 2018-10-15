@@ -13,55 +13,6 @@
 #set($service_name = $protoDom.file_name)
 <proto>
 #foreach($controller in $controllers)
-    <file name="${tool.getPath($controller_package)}${controller.name}ConsumerTemplate.java">
-        <![CDATA[
-${environment.notes}
-package ${controller_package};
-import ${model_package}.*;
-import ${params_package}.*;
-import java.util.List;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.stereotype.Component;
-import org.springframework.beans.factory.annotation.Autowired;
-import com.rabbitmq.client.Channel;
-import org.springframework.amqp.core.Message;
-import java.io.IOException;
-
-@Component
-public class ${controller.name}ConsumerTemplate {
-    @Autowired
-    public ${controller.name}ConsumerHandler m${controller.name}ConsumerHandler;
-#foreach($method in ${controller.methodDoms})
-    @RabbitListener(queues = "${method.url}")
-    public void ${method.name}(${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params, Channel channel, Message message) {
-        try {
-            m${controller.name}ConsumerHandler.${method.name}(m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params);
-            ackMessage(true, channel, message);
-        } catch (Exception e) {
-            ackMessage(false, channel, message);
-        }
-    }
-#end
-    /**
-     * ack
-     * @param success
-     * @param channel
-     * @param message
-     */
-    public void ackMessage(boolean success, Channel channel, Message message) {
-        try {
-            if (success) {
-                channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
-            } else {
-                channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, true);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-}
-        ]]>
-    </file>
     <file name="${tool.getPath($controller_package)}${controller.name}ConsumerHandler.java">
         <![CDATA[
 ${environment.notes}
@@ -69,10 +20,14 @@ package ${controller_package};
 import ${model_package}.*;
 import ${params_package}.*;
 import java.util.List;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import com.rabbitmq.client.Channel;
+import org.springframework.amqp.core.Message;
 
 public interface ${controller.name}ConsumerHandler {
 #foreach($method in ${controller.methodDoms})
-    void ${method.name}(${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params);
+    @RabbitListener(queues = "${method.url}")
+    void ${method.name}(${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params, Channel channel, Message message);
 #end
 }
         ]]>
