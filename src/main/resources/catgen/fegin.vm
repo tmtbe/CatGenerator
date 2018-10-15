@@ -37,6 +37,18 @@ public class ${tool.baseType($model.name)} implements Serializable {
     private $tool.typeChange(${parameter.type}) ${parameter.name};
 
 #end
+    /**
+    * Assign From DBModel
+    * @param obj
+    */
+    public void assignFromDBModel(Object obj)  {
+#foreach($parameter in ${model.modelParameterDoms})
+        try {
+            ${parameter.name} = ($tool.typeChange(${parameter.type})) obj.getClass().getDeclaredMethod("get$tool.toUpperCaseFirstOne($parameter.name)").invoke(obj);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+#end
 }
 ]]>
     </file>
