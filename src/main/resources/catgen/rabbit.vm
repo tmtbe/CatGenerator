@@ -74,7 +74,7 @@ public interface ${controller.name}ConsumerHandler {
 #foreach($method in ${controller.methodDoms})
     void ${method.name}(${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params);
 #end
-        }
+}
         ]]>
     </file>
     <file name="${tool.getPath($controller_package)}${controller.name}ProducerHandler.java">
