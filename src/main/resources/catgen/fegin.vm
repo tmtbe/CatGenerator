@@ -49,6 +49,7 @@ public class ${tool.baseType($model.name)} implements Serializable {
             e.printStackTrace();
         }
 #end
+    }
 }
 ]]>
     </file>
