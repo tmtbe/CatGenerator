@@ -48,9 +48,10 @@ package ${params_package}.base;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import java.io.Serializable;
 @Data
 @ApiModel
-public class BaseParams{
+public class BaseParams implements Serializable {
 #foreach($methodParameterDom in ${baseParams})
     @ApiModelProperty("${methodParameterDom.des}")
     private $tool.typeChange(${methodParameterDom.type}) ${methodParameterDom.name};

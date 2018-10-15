@@ -13,7 +13,7 @@
 #set($service_name = $protoDom.file_name)
 <proto>
 #foreach($controller in $controllers)
-    <file name="${tool.getPath($controller_package)}${controller.name}Consumer.java">
+    <file name="${tool.getPath($controller_package)}${controller.name}ConsumerTemplate.java">
         <![CDATA[
 ${environment.notes}
 package ${controller_package};
@@ -22,17 +22,62 @@ import ${params_package}.*;
 import java.util.List;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import com.rabbitmq.client.Channel;
+import org.springframework.amqp.core.Message;
+import java.io.IOException;
 
 @Component
-public interface ${controller.name}Consumer {
+public class ${controller.name}ConsumerTemplate {
+    @Autowired
+    public ${controller.name}ConsumerHandler m${controller.name}ConsumerHandler;
 #foreach($method in ${controller.methodDoms})
     @RabbitListener(queues = "${method.url}")
-    void ${method.name}(${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params);
+    public void ${method.name}(${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params, Channel channel, Message message) {
+        try {
+            m${controller.name}ConsumerHandler.${method.name}(m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params);
+            ackMessage(true, channel, message);
+        } catch (Exception e) {
+            ackMessage(false, channel, message);
+        }
+    }
 #end
+    /**
+     * ack
+     * @param success
+     * @param channel
+     * @param message
+     */
+    public void ackMessage(boolean success, Channel channel, Message message) {
+        try {
+            if (success) {
+                channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+            } else {
+                channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, true);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
         ]]>
     </file>
-    <file name="${tool.getPath($controller_package)}${controller.name}ProducerTemplate.java">
+    <file name="${tool.getPath($controller_package)}${controller.name}ConsumerHandler.java">
+        <![CDATA[
+${environment.notes}
+package ${controller_package};
+import ${model_package}.*;
+import ${params_package}.*;
+import java.util.List;
+
+public interface ${controller.name}ConsumerHandler {
+#foreach($method in ${controller.methodDoms})
+    void ${method.name}(${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params);
+#end
+        }
+        ]]>
+    </file>
+    <file name="${tool.getPath($controller_package)}${controller.name}ProducerHandler.java">
         <![CDATA[
 ${environment.notes}
 package ${controller_package};
@@ -44,7 +89,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ${controller.name}ProducerTemplate {
+public class ${controller.name}ProducerHandler {
     @Autowired
     private AmqpTemplate amqpTemplate;
 #foreach($method in ${controller.methodDoms})
@@ -65,10 +110,12 @@ public class ${controller.name}ProducerTemplate {
 package ${params_package}.base;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import ${model_package}.*;
 import lombok.Data;
+        import java.io.Serializable;
 @Data
 @ApiModel
-public class BaseParams{
+public class BaseParams implements Serializable{
 #foreach($methodParameterDom in ${baseParams})
     @ApiModelProperty("${methodParameterDom.des}")
     private $tool.typeChange(${methodParameterDom.type}) ${methodParameterDom.name};
@@ -88,6 +135,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import ${model_package}.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
