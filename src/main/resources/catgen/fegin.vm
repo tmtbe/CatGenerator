@@ -24,6 +24,7 @@ import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -38,6 +39,17 @@ public class ${tool.baseType($model.name)} implements Serializable {
     private $tool.typeChange(${parameter.type}) ${parameter.name};
 
 #end
+
+#if(${tool.isT($model.name)})
+    /**
+    * Assign From Object
+    * @param obj
+    */
+    public static <T> ${tool.baseType($model.name)} fromObject(Object obj,Class<T> clazz)  {
+        String str= JSON.toJSONString(obj);
+        return JSON.parseObject(str,new TypeReference<${tool.baseType($model.name)}>(clazz){});
+    }
+#else
     /**
     * Assign From Object
     * @param obj
@@ -46,6 +58,7 @@ public class ${tool.baseType($model.name)} implements Serializable {
         String str= JSON.toJSONString(obj);
         return JSON.parseObject(str,${tool.baseType($model.name)}.class);
     }
+#end
 }
 ]]>
     </file>
