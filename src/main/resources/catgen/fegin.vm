@@ -46,7 +46,7 @@ public class ${tool.baseType($model.name)} implements Serializable {
         try {
             ${parameter.name} = ($tool.typeChange(${parameter.type})) obj.getClass().getDeclaredMethod("get$tool.toUpperCaseFirstOne($parameter.name)").invoke(obj);
         } catch (Exception e) {
-            e.printStackTrace();
+
         }
 #end
     }
