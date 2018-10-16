@@ -23,6 +23,7 @@ import java.lang.reflect.Field;
 import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import com.alibaba.fastjson.JSON;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -38,17 +39,12 @@ public class ${tool.baseType($model.name)} implements Serializable {
 
 #end
     /**
-     * Assign From DBModel
+     * Assign From Object
      * @param obj
     */
-    public void assignFromDBModel(Object obj)  {
-#foreach($parameter in ${model.modelParameterDoms})
-        try {
-            ${parameter.name} = ($tool.typeChange(${parameter.type})) obj.getClass().getDeclaredMethod("get$tool.toUpperCaseFirstOne($parameter.name)").invoke(obj);
-        } catch (Exception e) {
-
-        }
-#end
+    public static ${tool.baseType($model.name)} fromObject(Object obj)  {
+        String str= JSON.toJSONString(obj);
+        return JSON.parseObject(str,${tool.baseType($model.name)}.class);
     }
 }
 ]]>
@@ -70,6 +66,14 @@ public class BaseParams implements Serializable{
     @ApiModelProperty("${methodParameterDom.des}")
     private $tool.typeChange(${methodParameterDom.type}) ${methodParameterDom.name};
 #end
+    public boolean checkRequired() {
+#foreach($methodParameterDom in ${method.methodParameterDoms})
+#if($methodParameterDom.required)
+        if (${methodParameterDom.name} == null) return false;
+#end
+#end
+        return true;
+    }
 }
     ]]>
 </file>
@@ -94,6 +98,15 @@ public class ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params e
     @ApiModelProperty("${methodParameterDom.des}")
     private $tool.typeChange(${methodParameterDom.type}) ${methodParameterDom.name};
 #end
+    public boolean checkRequired() {
+        if (!super.checkRequired()) return false;
+#foreach($methodParameterDom in ${method.methodParameterDoms})
+#if($methodParameterDom.required)
+        if (${methodParameterDom.name} == null) return false;
+#end
+#end
+        return true;
+    }
 }
         ]]>
     </file>
