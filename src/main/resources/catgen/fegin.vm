@@ -72,7 +72,6 @@ public class ${tool.baseType($model.name)} implements Serializable {
     * @param str
     */
     public static ${tool.baseType($model.name)} fromObject(String str)  {
-        String str= JSON.toJSONString(obj);
         return JSON.parseObject(str,${tool.baseType($model.name)}.class);
     }
 #end
