@@ -105,4 +105,21 @@ public class ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params e
     </file>
 #end
 #end
+
+#foreach($marcoFile in $marcoFiles)
+    <file name="${tool.getPath($marcos_package)}${marcoFile.name}.java">
+        <![CDATA[
+${environment.notes}
+package ${marcos_package};
+public class ${marcoFile.name} {
+#foreach($marco in ${marcoFile.marcoDoms})
+    /**
+    * ${marco.des};
+    */
+    public static final $tool.typeChange(${marco.type}) ${marco.name} = ${tool.getMarco($marco.type,$marco.value)};
+#end
+}
+        ]]>
+    </file>
+#end
 </proto>

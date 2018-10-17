@@ -66,4 +66,12 @@ public class BaseTools {
         return s;
 
     }
+
+    public String getMarco(String type,String value){
+        if(type.toLowerCase().equals("string")){
+            return MessageFormat.format("\"{0}\"",value);
+        }else{
+            return value;
+        }
+    }
 }

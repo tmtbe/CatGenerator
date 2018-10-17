@@ -183,7 +183,7 @@ public class ${marcoFile.name} {
     /**
      * ${marco.des};
      */
-    public static final $tool.typeChange(${marco.type}) ${marco.name} = ${marco.value};
+    public static final $tool.typeChange(${marco.type}) ${marco.name} = ${tool.getMarco($marco.type,$marco.value)};
 #end
 }
         ]]>

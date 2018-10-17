@@ -157,9 +157,9 @@ let ${marcoFile.name} = {
      * @type {${tool.desType($marco.type)}}
      */
 #if($index==$count)
-    $marco.name:$marco.value
+    $marco.name:${tool.getMarco($marco.type,$marco.value)}
 #else
-    $marco.name:$marco.value,
+    $marco.name:${tool.getMarco($marco.type,$marco.value)},
 #end
 #end
 }
