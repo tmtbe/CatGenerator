@@ -12,6 +12,75 @@
 
 #set($service_name = $protoDom.file_name)
 <proto>
+
+#foreach($model in $models)
+    <file name="${tool.getPath($model_package)}${tool.getFileName($model.name)}.java">
+<![CDATA[
+${environment.notes}
+package ${model_package};
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+import java.lang.reflect.Field;
+import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+import lombok.Builder;
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+/**
+ * ${model.des}
+ */
+public class ${tool.baseType($model.name)} implements Serializable {
+#foreach($parameter in ${model.modelParameterDoms})
+    /**
+     * ${parameter.des}
+     */
+    private $tool.typeChange(${parameter.type}) ${parameter.name};
+
+#end
+#if(${tool.isT($model.name)})
+    /**
+    * Assign From Object
+    * @param obj
+    */
+    public static <T> ${tool.baseType($model.name)} fromObject(Object obj,Class<T> clazz)  {
+        String str= JSON.toJSONString(obj);
+        return JSON.parseObject(str,new TypeReference<${tool.baseType($model.name)}>(clazz){});
+    }
+    /**
+    * Assign From Object
+    * @param str
+    */
+    public static <T> ${tool.baseType($model.name)} fromObject(String str,Class<T> clazz)  {
+        return JSON.parseObject(str,new TypeReference<${tool.baseType($model.name)}>(clazz){});
+    }
+#else
+    /**
+    * Assign From Object
+    * @param obj
+    */
+    public static ${tool.baseType($model.name)} fromObject(Object obj)  {
+        String str= JSON.toJSONString(obj);
+        return JSON.parseObject(str,${tool.baseType($model.name)}.class);
+    }
+    /**
+    * Assign From Object
+    * @param str
+    */
+    public static ${tool.baseType($model.name)} fromObject(String str)  {
+        return JSON.parseObject(str,${tool.baseType($model.name)}.class);
+    }
+#end
+}
+]]>
+    </file>
+#end
+
 #foreach($controller in $controllers)
     <file name="${tool.getPath($controller_package)}${controller.name}ConsumerHandler.java">
         <![CDATA[
