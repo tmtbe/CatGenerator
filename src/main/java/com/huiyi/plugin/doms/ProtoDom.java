@@ -114,6 +114,15 @@ public class ProtoDom {
             ControllerDom clone = (ControllerDom) controllerDom.clone();
             compatibleGenericsControllerDoms.add(clone);
             for (MethodDom methodDom : clone.getMethodDoms()) {
+                for (MethodParameterDom methodParameterDom : methodDom.getMethodParameterDoms()){
+                    String mpType = javaTool.baseType(methodParameterDom.getType());
+                    if(javaTool.isBaseType(mpType)) continue;
+                    ModelDom needModel = modelDomMap.get(mpType);
+                    if (needModel == null) {
+                        throw new Exception(mpType + "->没有找到对应的Model");
+                    }
+                    modelDoms.add(needModel);
+                }
                 if(methodDom.getRep().equals("")) continue;
                 int index = methodDom.getRep().indexOf("{");
                 if (index > 0) {
