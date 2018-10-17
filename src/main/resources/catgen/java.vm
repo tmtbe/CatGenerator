@@ -118,6 +118,9 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import com.huiyi.autogen.model.*;
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
