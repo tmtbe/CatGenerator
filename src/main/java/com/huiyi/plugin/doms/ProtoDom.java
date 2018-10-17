@@ -123,6 +123,7 @@ public class ProtoDom {
                     newModel(baseClass, tclass, modelDomMap);
                     methodDom.setRep(baseClass + "_" + baseTools.typeToClassString(tclass));
                     //寻找需要的model并添加进来
+                    if(javaTool.isBaseType(tclass)) continue;
                     ModelDom needModel = modelDomMap.get(tclass);
                     if (needModel == null) {
                         throw new Exception(tclass + "->没有找到对应的Model");
