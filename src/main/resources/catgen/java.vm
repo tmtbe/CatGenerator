@@ -151,6 +151,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import ${params_package}.*;
 import java.util.List;
+import com.huiyi.base.annotation.HuiyiHttpResult;
+
 @Api("${controller.des}")
 @RequestMapping("${controller.url}")
 public interface I${controller.name} {
@@ -158,6 +160,7 @@ public interface I${controller.name} {
     /**
     * ${method.des}
     */
+    @HuiyiHttpResult
     @ApiOperation(value = "${method.des}", httpMethod = "$tool.toUpper(${method.method})", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponse(code = 200, message = "success", response = ${tool.getTypeClass($method.rep)})
     @$tool.toUpperCaseFirstOneOtherLow(${method.method})Mapping("${method.url}")
