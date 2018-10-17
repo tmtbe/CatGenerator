@@ -43,6 +43,7 @@ public class AutoMojo extends AbstractMojo {
         run(filepath, "android");
         run(filepath, "oc");
         run(filepath, "js");
+        run(filepath, "rabbit");
     }
 
     private void run(String filepath, String environmentName) throws MojoExecutionException {
