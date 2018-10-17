@@ -108,6 +108,7 @@ public class BaseParams implements Serializable{
 
 #foreach($controller in $controllers)
 #foreach($method in ${controller.methodDoms})
+#if(${method.methodParameterDoms.size()}>0)
     <file name="${tool.getPath($params_package)}${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params.java">
         <![CDATA[
 package ${params_package};
@@ -138,6 +139,7 @@ public class ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params e
 }
         ]]>
     </file>
+#end
 #end
 #end
 #foreach($controller in $controllers)
