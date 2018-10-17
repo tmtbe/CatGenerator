@@ -50,6 +50,13 @@ public class ${tool.baseType($model.name)} implements Serializable {
         String str= JSON.toJSONString(obj);
         return JSON.parseObject(str,new TypeReference<${tool.baseType($model.name)}>(clazz){});
     }
+    /**
+    * Assign From Object
+    * @param obj
+    */
+    public static <T> ${tool.baseType($model.name)} fromObject(String str,Class<T> clazz)  {
+        return JSON.parseObject(str,new TypeReference<${tool.baseType($model.name)}>(clazz){});
+    }
 #else
     /**
     * Assign From Object
@@ -57,6 +64,13 @@ public class ${tool.baseType($model.name)} implements Serializable {
     */
     public static ${tool.baseType($model.name)} fromObject(Object obj)  {
         String str= JSON.toJSONString(obj);
+        return JSON.parseObject(str,${tool.baseType($model.name)}.class);
+    }
+    /**
+    * Assign From Object
+    * @param obj
+    */
+    public static ${tool.baseType($model.name)} fromObject(String str)  {
         return JSON.parseObject(str,${tool.baseType($model.name)}.class);
     }
 #end
