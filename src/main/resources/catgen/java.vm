@@ -52,7 +52,7 @@ public class ${tool.baseType($model.name)} implements Serializable {
     }
     /**
     * Assign From Object
-    * @param obj
+    * @param str
     */
     public static <T> ${tool.baseType($model.name)} fromObject(String str,Class<T> clazz)  {
         return JSON.parseObject(str,new TypeReference<${tool.baseType($model.name)}>(clazz){});
@@ -68,7 +68,7 @@ public class ${tool.baseType($model.name)} implements Serializable {
     }
     /**
     * Assign From Object
-    * @param obj
+    * @param str
     */
     public static ${tool.baseType($model.name)} fromObject(String str)  {
         return JSON.parseObject(str,${tool.baseType($model.name)}.class);
