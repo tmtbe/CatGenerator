@@ -25,8 +25,8 @@ import org.springframework.amqp.rabbit.annotation.*;
 import com.rabbitmq.client.Channel;
 import org.springframework.amqp.core.Message;
 
-public interface ${controller.name}ConsumerHandler {
 @RabbitListener(queues = "${controller.url}")
+public interface ${controller.name}ConsumerHandler {
 #foreach($method in ${controller.methodDoms})
     @RabbitHandler
     void ${method.name}(${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params, Channel channel, Message message) throws Exception;
