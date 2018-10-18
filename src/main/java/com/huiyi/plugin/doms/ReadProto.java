@@ -76,7 +76,7 @@ public class ReadProto {
                 t.merge(ctx, sw);
                 log.info("生成" + entry.getKey() + "协议");
                 readResult(sw, environment,log);
-                if(entry.getKey().equals("fegin")||entry.getKey().equals("java")){
+                if(entry.getKey().equals("fegin")||entry.getKey().equals("java")||entry.getKey().equals("rabbit")){
                     t = ve.getTemplate("catgen/java-base.vm");
                     sw = new StringWriter();
                     t.merge(ctx, sw);

@@ -13,74 +13,6 @@
 #set($service_name = $protoDom.file_name)
 <proto>
 
-#foreach($model in $models)
-    <file name="${tool.getPath($model_package)}${tool.getFileName($model.name)}.java">
-<![CDATA[
-${environment.notes}
-package ${model_package};
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-import java.lang.reflect.Field;
-import lombok.Data;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
-import lombok.Builder;
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-/**
- * ${model.des}
- */
-public class ${tool.baseType($model.name)} implements Serializable {
-#foreach($parameter in ${model.modelParameterDoms})
-    /**
-     * ${parameter.des}
-     */
-    private $tool.typeChange(${parameter.type}) ${parameter.name};
-
-#end
-#if(${tool.isT($model.name)})
-    /**
-    * Assign From Object
-    * @param obj
-    */
-    public static <T> ${tool.baseType($model.name)} fromObject(Object obj,Class<T> clazz)  {
-        String str= JSON.toJSONString(obj);
-        return JSON.parseObject(str,new TypeReference<${tool.baseType($model.name)}>(clazz){});
-    }
-    /**
-    * Assign From Object
-    * @param str
-    */
-    public static <T> ${tool.baseType($model.name)} fromObject(String str,Class<T> clazz)  {
-        return JSON.parseObject(str,new TypeReference<${tool.baseType($model.name)}>(clazz){});
-    }
-#else
-    /**
-    * Assign From Object
-    * @param obj
-    */
-    public static ${tool.baseType($model.name)} fromObject(Object obj)  {
-        String str= JSON.toJSONString(obj);
-        return JSON.parseObject(str,${tool.baseType($model.name)}.class);
-    }
-    /**
-    * Assign From Object
-    * @param str
-    */
-    public static ${tool.baseType($model.name)} fromObject(String str)  {
-        return JSON.parseObject(str,${tool.baseType($model.name)}.class);
-    }
-#end
-}
-]]>
-    </file>
-#end
-
 #foreach($controller in $controllers)
     <file name="${tool.getPath($controller_package)}${controller.name}ConsumerHandler.java">
         <![CDATA[
@@ -88,18 +20,20 @@ ${environment.notes}
 package ${controller_package};
 import ${model_package}.*;
 import ${params_package}.*;
-import java.util.List;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import java.util.*;
+import org.springframework.amqp.rabbit.annotation.*;
 import com.rabbitmq.client.Channel;
 import org.springframework.amqp.core.Message;
 
 public interface ${controller.name}ConsumerHandler {
+@RabbitListener(queues = "${controller.url}")
 #foreach($method in ${controller.methodDoms})
-    @RabbitListener(queues = "${method.url}")
+    @RabbitHandler
     void ${method.name}(${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params, Channel channel, Message message) throws Exception;
 #end
 }
         ]]>
+
     </file>
     <file name="${tool.getPath($controller_package)}${controller.name}ProducerHandler.java">
         <![CDATA[
@@ -123,79 +57,6 @@ public class ${controller.name}ProducerHandler {
     public void ${method.name}(${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params) {
         amqpTemplate.convertAndSend("${method.url}", m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params);
     }
-#end
-}
-        ]]>
-    </file>
-#end
-
-    <file name="${tool.getPath($params_package)}base/BaseParams.java">
-        <![CDATA[
-package ${params_package}.base;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import ${model_package}.*;
-import lombok.Data;
-        import java.io.Serializable;
-@Data
-@ApiModel
-public class BaseParams implements Serializable{
-#foreach($methodParameterDom in ${baseParams})
-    @ApiModelProperty("${methodParameterDom.des}")
-    private $tool.typeChange(${methodParameterDom.type}) ${methodParameterDom.name};
-#end
-}
-        ]]>
-    </file>
-
-#foreach($controller in $controllers)
-#foreach($method in ${controller.methodDoms})
-    <file name="${tool.getPath($params_package)}${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params.java">
-        <![CDATA[
-package ${params_package};
-import ${params_package}.base.BaseParams;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import ${model_package}.*;
-import java.util.List;
-
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@ApiModel
-public class ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params extends BaseParams {
-#foreach($methodParameterDom in ${method.methodParameterDoms})
-    @ApiModelProperty("${methodParameterDom.des}")
-    private $tool.typeChange(${methodParameterDom.type}) ${methodParameterDom.name};
-#end
-    public boolean checkRequired() {
-#foreach($methodParameterDom in ${method.methodParameterDoms})
-#if($methodParameterDom.required)
-        if (${methodParameterDom.name} == null) return false;
-#end
-#end
-        return true;
-    }
-}
-        ]]>
-    </file>
-#end
-#end
-
-#foreach($marcoFile in $marcoFiles)
-    <file name="${tool.getPath($marcos_package)}${marcoFile.name}.java">
-        <![CDATA[
-${environment.notes}
-package ${marcos_package};
-public class ${marcoFile.name} {
-#foreach($marco in ${marcoFile.marcoDoms})
-    /**
-    * ${marco.des};
-    */
-    public static final $tool.typeChange(${marco.type}) ${marco.name} = ${tool.getMarco($marco.type,$marco.value)};
 #end
 }
         ]]>
