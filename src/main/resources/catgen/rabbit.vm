@@ -55,7 +55,7 @@ public class ${controller.name}ProducerHandler {
      * ${method.des}
      */
     public void ${method.name}(${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params) {
-        amqpTemplate.convertAndSend("${method.url}", m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params);
+        amqpTemplate.convertAndSend("${controller.url}", m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params);
     }
 #end
 }
