@@ -171,6 +171,14 @@ public class ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params e
     @ApiModelProperty("${methodParameterDom.des}")
     private $tool.typeChange(${methodParameterDom.type}) ${methodParameterDom.name};
 #end
+    public boolean checkRequired() {
+#foreach($methodParameterDom in ${method.methodParameterDoms})
+#if($methodParameterDom.required)
+        if (${methodParameterDom.name} == null) return false;
+#end
+#end
+        return true;
+    }
 }
         ]]>
     </file>
