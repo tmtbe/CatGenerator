@@ -16,16 +16,11 @@
 <![CDATA[
 ${environment.notes}
 package ${model_package};
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.lang.reflect.Field;
-import lombok.Data;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
-import lombok.Builder;
+import lombok.*;
+import com.alibaba.fastjson.*;
+import java.io.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -33,7 +28,7 @@ import lombok.Builder;
 /**
  * ${model.des}
  */
-public class ${tool.baseType($model.name)} implements Serializable {
+public class ${tool.baseType($model.name)} implements Serializable, Cloneable {
 #foreach($parameter in ${model.modelParameterDoms})
     /**
      * ${parameter.des}
@@ -74,6 +69,17 @@ public class ${tool.baseType($model.name)} implements Serializable {
         return JSON.parseObject(str,${tool.baseType($model.name)}.class);
     }
 #end
+    public ${tool.baseType($model.name)} clone() throws CloneNotSupportedException {
+        return (${tool.baseType($model.name)}) super.clone();
+    }
+    public ${tool.baseType($model.name)} deepClone() throws IOException, ClassNotFoundException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(bos);
+        oos.writeObject(this);
+        ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+        ObjectInputStream ois = new ObjectInputStream(bis);
+        return (${tool.baseType($model.name)}) ois.readObject();
+    }
 }
 ]]>
     </file>
@@ -82,14 +88,13 @@ public class ${tool.baseType($model.name)} implements Serializable {
 <file name="${tool.getPath($params_package)}base/BaseParams.java">
     <![CDATA[
 package ${params_package}.base;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import java.io.Serializable;
+import io.swagger.annotations.*;
+import lombok.*;
+import java.io.*;
 
 @Data
 @ApiModel
-public class BaseParams implements Serializable{
+public class BaseParams implements Serializable, Cloneable {
 #foreach($methodParameterDom in ${baseParams})
     @ApiModelProperty("${methodParameterDom.des}")
     private $tool.typeChange(${methodParameterDom.type}) ${methodParameterDom.name};
@@ -102,6 +107,15 @@ public class BaseParams implements Serializable{
 #end
         return true;
     }
+
+    public Object deepClone() throws IOException, ClassNotFoundException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(bos);
+        oos.writeObject(this);
+        ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+        ObjectInputStream ois = new ObjectInputStream(bis);
+        return ois.readObject();
+    }
 }
     ]]>
 </file>
@@ -113,16 +127,15 @@ public class BaseParams implements Serializable{
         <![CDATA[
 package ${params_package};
 import ${params_package}.base.BaseParams;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import lombok.Data;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import io.swagger.annotations.*;
+import lombok.*;
 import com.huiyi.autogen.model.*;
-import java.util.List;
+import java.util.*;
+import java.io.*;
 
 @Data
 @AllArgsConstructor
+@Builder
 @NoArgsConstructor
 @ApiModel
 public class ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params extends BaseParams {
@@ -138,6 +151,13 @@ public class ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params e
 #end
 #end
         return true;
+    }
+    public ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params clone() throws CloneNotSupportedException {
+        return (${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params) super.clone();
+    }
+
+    public ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params deepClone() throws IOException, ClassNotFoundException {
+        return (${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params) super.deepClone();
     }
 }
         ]]>
