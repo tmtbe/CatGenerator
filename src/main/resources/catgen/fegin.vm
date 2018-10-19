@@ -31,11 +31,11 @@ public interface ${controller.name}Client {
     /**
     * ${method.des}
     */
-    @$tool.toUpperCaseFirstOneOtherLow(${method.method})Mapping("${method.url}")
+    @RequestMapping(method = RequestMethod.$tool.toUpperCase(${method.method}),path = "${method.url}")
 #if(${method.methodParameterDoms.size()} == 0)
     $tool.typeChange(${method.rep}) ${method.name}();
 #else
-#if(${method.rep} == "post")
+#if($tool.toUpperCase(${method.method}) == "POST")
     $tool.typeChange(${method.rep}) ${method.name}(@RequestBody ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params);
 #else
     $tool.typeChange(${method.rep}) ${method.name}(${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params);

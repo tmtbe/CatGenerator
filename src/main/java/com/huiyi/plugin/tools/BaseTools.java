@@ -5,6 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BaseTools {
+
+    //转大写
+    public String toUpperCase(String s) {
+        return s.toUpperCase();
+    }
+
     //首字母转大写其余小写
     public String toUpperCaseFirstOneOtherLow(String s) {
         return s.substring(0, 1).toUpperCase().concat(s.substring(1).toLowerCase());
