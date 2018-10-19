@@ -24,7 +24,9 @@ import java.util.*;
 import org.springframework.amqp.rabbit.annotation.*;
 import com.rabbitmq.client.Channel;
 import org.springframework.amqp.core.Message;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
+@ConditionalOnProperty(prefix = "spring.rabbitmq",name = "host")
 @RabbitListener(queues = "${controller.url}")
 public interface ${controller.name}ConsumerHandler {
 #foreach($method in ${controller.methodDoms})
@@ -45,7 +47,9 @@ import java.util.List;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
+@ConditionalOnProperty(prefix = "spring.rabbitmq",name = "host")
 @Component
 public class ${controller.name}ProducerHandler {
     @Autowired
