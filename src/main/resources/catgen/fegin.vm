@@ -38,7 +38,7 @@ public interface ${controller.name}Client {
 #if($tool.toUpperCase(${method.method}) == "POST")
     $tool.typeChange(${method.rep}) ${method.name}(@RequestBody ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params);
 #else
-    $tool.typeChange(${method.rep}) ${method.name}(${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params);
+    $tool.typeChange(${method.rep}) ${method.name}(${tool.buildGetParam($method.methodParameterDoms,$baseParams)});
 #end
 #end
 #end
@@ -83,9 +83,13 @@ public class ${controller.name}FallBackFactory implements FallbackFactory<${cont
             */
             @Override
 #if(${method.methodParameterDoms.size()} == 0)
-            public $tool.typeChange(${method.rep}) ${method.name}(){
+            public $tool.typeChange(${method.rep}) ${method.name}() {
 #else
-            public $tool.typeChange(${method.rep}) ${method.name}(@RequestBody ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params){
+#if($tool.toUpperCase(${method.method}) == "POST")
+            public $tool.typeChange(${method.rep}) ${method.name}(@RequestBody ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params) {
+#else
+            public $tool.typeChange(${method.rep}) ${method.name}(${tool.buildGetParam($method.methodParameterDoms,$baseParams)}) {
+#end
 #end
                 return ${method.name}Result;
             }

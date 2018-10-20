@@ -1,6 +1,12 @@
 package com.huiyi.plugin.tools;
 
+import com.huiyi.plugin.doms.MethodParameterDom;
+import org.apache.commons.lang.StringUtils;
+
+import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class JavaTool extends BaseTools {
@@ -13,6 +19,21 @@ public class JavaTool extends BaseTools {
         baseType.put("bool", "Boolean");
         baseType.put("float", "Float");
         baseType.put("double", "Double");
+    }
+
+    public String buildGetParam(List<MethodParameterDom> ... methodParameterDoms) {
+        ArrayList<String> result = new ArrayList<>();
+        for (List<MethodParameterDom> doms : methodParameterDoms) {
+            for (MethodParameterDom dom : doms) {
+                String one = MessageFormat.format("@RequestParam(name = \"{0}\",required = {1}) {2} {3}",
+                        dom.getName(),
+                        dom.getRequired(),
+                        typeChange(dom.getType()),
+                        dom.getName());
+                result.add(one);
+            }
+        }
+        return StringUtils.join(result.toArray(),", ");
     }
 
     public boolean isBaseType(String s) {

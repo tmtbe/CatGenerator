@@ -122,7 +122,7 @@ public class BaseParams implements Serializable, Cloneable {
 
 #foreach($controller in $controllers)
 #foreach($method in ${controller.methodDoms})
-#if(${method.methodParameterDoms.size()}>0)
+#if(${method.methodParameterDoms.size()}>0&&$tool.toUpperCase(${method.method}) != "GET")
     <file name="${tool.getPath($params_package)}${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params.java">
         <![CDATA[
 package ${params_package};

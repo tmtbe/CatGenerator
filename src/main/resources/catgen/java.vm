@@ -37,9 +37,13 @@ public interface I${controller.name} {
     @$tool.toUpperCaseFirstOneOtherLow(${method.method})Mapping("${method.url}")
 
 #if(${method.methodParameterDoms.size()} == 0)
-    $tool.typeChange(${method.rep}) ${method.name} () throws Exception ;
+    $tool.typeChange(${method.rep}) ${method.name}() throws Exception ;
 #else
-    $tool.typeChange(${method.rep}) ${method.name}(${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params) throws Exception;
+#if($tool.toUpperCase(${method.method}) == "POST")
+    $tool.typeChange(${method.rep}) ${method.name}(@RequestBody ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params) throws Exception ;
+#else
+    $tool.typeChange(${method.rep}) ${method.name}(${tool.buildGetParam($method.methodParameterDoms,$baseParams)});
+#end
 #end
 #end
 }
