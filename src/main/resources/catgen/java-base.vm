@@ -36,10 +36,10 @@ public class ${tool.baseType($model.name)} implements Serializable, Cloneable {
     /**
      * ${parameter.des}
      */
-#if(${tool.toLower($methodParameterDom.type)}=="date")
+#if(${tool.toLower($parameter.type)}=="date")
     @JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd")
     @JSONField(format="yyyy-MM-dd")
-#elseif(${tool.toLower($methodParameterDom.type)}=="datetime")
+#elseif(${tool.toLower($parameter.type)}=="datetime")
     @JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd HH:mm:ss")
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
 #end
