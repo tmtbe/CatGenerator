@@ -13,6 +13,7 @@ public class JsTool extends BaseTools {
         baseType.put("float", "Number");
         baseType.put("double", "Number");
         baseType.put("date", "string");
+        baseType.put("datetime", "string");
     }
     public Boolean isBaseType(String s) {
         return  baseType.containsKey(s);

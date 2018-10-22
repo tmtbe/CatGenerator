@@ -33,6 +33,10 @@ public class BaseTools {
     public String toUpper(String s) {
         return s.toUpperCase();
     }
+    //小写
+    public String toLower(String s) {
+        return s.toLowerCase();
+    }
     /**
      * 获取文件名
      * @return String

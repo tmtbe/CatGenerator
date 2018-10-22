@@ -21,6 +21,8 @@ import java.lang.reflect.Field;
 import lombok.*;
 import com.alibaba.fastjson.*;
 import java.io.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -33,6 +35,11 @@ public class ${tool.baseType($model.name)} implements Serializable, Cloneable {
     /**
      * ${parameter.des}
      */
+#if(${tool.toLower($parameter.type)}=="date")
+    @JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd")
+#elseif(${tool.toLower($parameter.type)}=="datetime")
+    @JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd HH:mm:ss")
+#end
     private $tool.typeChange(${parameter.type}) ${parameter.name};
 
 #end
@@ -132,6 +139,7 @@ import lombok.*;
 import com.huiyi.autogen.model.*;
 import java.util.*;
 import java.io.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Data
 @AllArgsConstructor
@@ -140,6 +148,11 @@ import java.io.*;
 @ApiModel
 public class ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params extends BaseParams {
 #foreach($methodParameterDom in ${method.methodParameterDoms})
+#if(${tool.toLower($methodParameterDom.type)}=="date")
+    @JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd")
+#elseif(${tool.toLower($methodParameterDom.type)}=="datetime")
+    @JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd HH:mm:ss")
+#end
     @ApiModelProperty("${methodParameterDom.des}")
     private $tool.typeChange(${methodParameterDom.type}) ${methodParameterDom.name};
 #end
