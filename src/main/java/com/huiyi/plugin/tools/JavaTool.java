@@ -19,6 +19,7 @@ public class JavaTool extends BaseTools {
         baseType.put("bool", "Boolean");
         baseType.put("float", "Float");
         baseType.put("double", "Double");
+        baseType.put("date", "Date");
     }
 
     public String buildGetParam(List<MethodParameterDom> ... methodParameterDoms) {
