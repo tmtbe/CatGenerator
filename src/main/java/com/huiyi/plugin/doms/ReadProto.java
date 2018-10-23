@@ -40,6 +40,7 @@ public class ReadProto {
     public void run(Log log,String environmentName) throws Exception {
         //获取所有的proto
         for (File file : files) {
+            log.info(file.getAbsolutePath());
             getProto(file);
         }
         //合并proto的model
