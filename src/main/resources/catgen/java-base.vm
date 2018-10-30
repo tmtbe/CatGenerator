@@ -111,7 +111,7 @@ public class BaseParams implements Serializable, Cloneable {
 #end
     public boolean checkRequired() {
 #foreach($methodParameterDom in ${method.methodParameterDoms})
-#if($methodParameterDom.required)
+#if($methodParameterDom.required=="true")
         if (${methodParameterDom.name} == null) return false;
 #end
 #end
@@ -165,7 +165,7 @@ public class ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params e
     public boolean checkRequired() {
         if (!super.checkRequired()) return false;
 #foreach($methodParameterDom in ${method.methodParameterDoms})
-#if($methodParameterDom.required)
+#if($methodParameterDom.required=="true")
         if (${methodParameterDom.name} == null) return false;
 #end
 #end
