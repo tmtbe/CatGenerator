@@ -14,7 +14,7 @@ public class ModelDom implements Cloneable {
     private String name;
     private String type;
     private String des;
-
+    private String used;
     public ModelDom() {
         modelParameterDoms = new ArrayList<>();
     }
@@ -75,5 +75,13 @@ public class ModelDom implements Cloneable {
             clone.modelParameterDoms.add((ModelParameterDom) modelParameterDom.clone());
         }
         return clone;
+    }
+
+    public String getUsed() {
+        return used;
+    }
+
+    public void setUsed(String used) {
+        this.used = used;
     }
 }

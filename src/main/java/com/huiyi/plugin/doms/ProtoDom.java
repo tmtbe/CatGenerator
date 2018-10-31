@@ -155,6 +155,12 @@ public class ProtoDom {
                 }
             }
         }
+        //寻找标志used的model
+        for (ModelDom modelDom:modelDomMap.values()) {
+            if(modelDom.getUsed()!=null&&modelDom.getUsed().trim().toLowerCase().equals("true")){
+                modelDoms.add(modelDom);
+            }
+        }
         //循环找寻子model，这里忽略检测泛型嵌套
         for (ModelDom modelDom : modelDoms) {
             allModelDomMap.put(modelDom.getName(), modelDom);
