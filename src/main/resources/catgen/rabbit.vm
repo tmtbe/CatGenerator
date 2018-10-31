@@ -26,9 +26,10 @@ import com.rabbitmq.client.Channel;
 import org.springframework.amqp.core.Message;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.amqp.rabbit.annotation.Queue;
+import org.springframework.amqp.core.ExchangeTypes;
 
 @ConditionalOnProperty(prefix = "spring.rabbitmq",name = "host")
-@RabbitListener(bindings=@QueueBinding(value=@Queue("${controller.url}"),exchange=@Exchange("${service_name}")))
+@RabbitListener(bindings=@QueueBinding(value=@Queue("${controller.url}"),exchange=@Exchange(value = "${service_name}",type = ExchangeTypes.TOPIC)))
 public interface ${controller.name}ConsumerHandler {
 #foreach($method in ${controller.methodDoms})
     @RabbitHandler
