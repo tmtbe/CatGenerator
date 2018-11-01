@@ -37,7 +37,9 @@ import org.springframework.amqp.rabbit.annotation.Queue;
                 }),
                 exchange = @Exchange(value = "${service_name}", type = "topic"),
                 key = "${controller.url}"
-        ),
+        )
+})
+@RabbitListener(containerFactory = "low", bindings = {
         @QueueBinding(value = @Queue(value = "${controller.url}.retry",
                 arguments = {
                         @Argument(name = "x-dead-letter-exchange", value = "async"),
