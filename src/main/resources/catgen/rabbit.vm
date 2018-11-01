@@ -43,12 +43,13 @@ import org.springframework.amqp.rabbit.annotation.Queue;
         @QueueBinding(value = @Queue(value = "${controller.url}.retry",
                 arguments = {
                         @Argument(name = "x-dead-letter-exchange", value = "async"),
-                        @Argument(name = "x-dead-letter-routing-key", value = "${controller.url}.failed")
+                        @Argument(name = "x-dead-letter-routing-key", value = "${controller.url}.failed"),
+                        @Argument(name = "x-message-ttl", value = "30000", type = "java.lang.Integer")
                 }),
                 exchange = @Exchange(value = "${service_name}", type = "topic"),
                 key = "${controller.url}.retry"
         )
-})
+}, autoStartup = "false")
 public interface ${controller.name}ConsumerHandler {
 #foreach($method in ${controller.methodDoms})
     @RabbitHandler
