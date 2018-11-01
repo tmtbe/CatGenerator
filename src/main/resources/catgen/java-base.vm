@@ -23,6 +23,7 @@ import com.alibaba.fastjson.*;
 import java.io.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.alibaba.fastjson.annotation.JSONField;
+import org.springframework.beans.BeanUtils;
 
 @Data
 @AllArgsConstructor
@@ -79,6 +80,10 @@ public class ${tool.baseType($model.name)} implements Serializable, Cloneable {
         return JSON.parseObject(str,${tool.baseType($model.name)}.class);
     }
 #end
+    public ${tool.baseType($model.name)} copyFrom(Object o){
+        BeanUtils.copyProperties(o,this);
+        return this;
+    }
     public ${tool.baseType($model.name)} clone() throws CloneNotSupportedException {
         return (${tool.baseType($model.name)}) super.clone();
     }
