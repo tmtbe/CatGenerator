@@ -100,7 +100,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.amqp.rabbit.annotation.Queue;
 
 @ConditionalOnProperty(prefix = "spring.rabbitmq", name = "host")
-@RabbitListener(bindings=@QueueBinding(value=@Queue("${controller.url}.failed"),exchange=@Exchange(value = "${service_name}",type = "topic"), key = "${controller.url}.failed"))
+@RabbitListener(containerFactory = "low",bindings=@QueueBinding(value=@Queue("${controller.url}.failed"),exchange=@Exchange(value = "${service_name}",type = "topic"), key = "${controller.url}.failed"))
 public interface ${controller.name}FailedConsumerHandler {
 #foreach($method in ${controller.methodDoms})
     @RabbitHandler
