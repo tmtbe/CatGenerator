@@ -18,11 +18,13 @@ public class ReadProto {
     private ArrayList<File> files;
     private ArrayList<ProtoDom> protoDoms;
     private Map<String, ModelDom> modelDoms;
-
+    private Map<String, MarcoFileDom> marcoFileDomMap;
     public ReadProto() {
         files = new ArrayList<>();
         protoDoms = new ArrayList<>();
         modelDoms = new HashMap<>();
+        modelDoms = new HashMap<>();
+        marcoFileDomMap = new HashMap<>();
     }
 
     /**
@@ -51,6 +53,12 @@ public class ReadProto {
                 }
                 modelDoms.put(modelDom.getName(), modelDom);
             }
+            for (MarcoFileDom marcoFileDom : protoDom.getMarcoFileDoms()) {
+                if (marcoFileDomMap.containsKey(marcoFileDom.getName())) {
+                    throw new Exception(marcoFileDom.getName() + "->MarcoFile重复了");
+                }
+                marcoFileDomMap.put(marcoFileDom.getName(), marcoFileDom);
+            }
         }
         //输出结果了
         VelocityEngine ve = new VelocityEngine();
@@ -70,6 +78,7 @@ public class ReadProto {
                 VelocityContext ctx = new VelocityContext();
                 ctx.put("environment", environment);
                 ctx.put("protoDom", protoDom);
+                ctx.put("marcoFileDoms", new ArrayList<>(marcoFileDomMap.values()));
                 Class clazz = Class.forName(environment.getTool_class());
                 Object tool = clazz.newInstance();
                 ctx.put("tool", tool);
