@@ -126,23 +126,31 @@ import java.util.List;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 @ConditionalOnProperty(prefix = "spring.rabbitmq",name = "host")
 @Component
 public class ${controller.name}ProducerHandler {
-@Autowired
-private AmqpTemplate amqpTemplate;
+    @Autowired
+    private AmqpTemplate amqpTemplate;
+#if(${controller.delay}=="true")
+#set($url=${controller.url}+".delay")
+#else
+#set($url=${controller.url})
+#end
 #foreach($method in ${controller.methodDoms})
     /**
-    * ${method.des}
-    */
+     * ${method.des}
+     */
     public void ${method.name}(${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params) {
-#if(${controller.delay}=="true")
-        amqpTemplate.convertAndSend("${controller.url}.delay", m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params);
-#else
-        amqpTemplate.convertAndSend("${controller.url}", m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params);
-#end
+        amqpTemplate.convertAndSend("$url", m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params);
+    }
+    /**
+     * ${method.des}
+     */
+    public void ${method.name}(${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params, MessagePostProcessor messagePostProcessor) {
+        amqpTemplate.convertAndSend("$url", m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params,messagePostProcessor);
     }
 #end
 }
