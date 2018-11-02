@@ -9,14 +9,17 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class ControllerDom implements Cloneable{
+public class ControllerDom implements Cloneable {
     private ArrayList<MethodDom> methodDoms;
     private String name;
     private String url;
     private String des;
-    public ControllerDom(){
+    private String ttl = "10000";
+    private String delay;
+    public ControllerDom() {
         methodDoms = new ArrayList<>();
     }
+
     public void setElement(Element element) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         List<Attribute> attributes = element.attributes();
         for (Attribute attribute : attributes) {
@@ -74,5 +77,21 @@ public class ControllerDom implements Cloneable{
             clone.methodDoms.add((MethodDom) methodDom.clone());
         }
         return clone;
+    }
+
+    public String getTtl() {
+        return ttl;
+    }
+
+    public void setTtl(String ttl) {
+        this.ttl = ttl;
+    }
+
+    public String getDelay() {
+        return delay;
+    }
+
+    public void setDelay(String delay) {
+        this.delay = delay;
     }
 }
