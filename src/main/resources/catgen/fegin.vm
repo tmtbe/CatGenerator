@@ -9,7 +9,7 @@
 #set($model_package = $environment.model_package)
 #set($marcos_package = $environment.marcos_package)
 #set($params_package = $environment.params_package)
-#set($service_name = $protoDom.file_name)
+#set($service_name = $environment.service_name)
 
 <proto>
 #foreach($controller in $controllers)

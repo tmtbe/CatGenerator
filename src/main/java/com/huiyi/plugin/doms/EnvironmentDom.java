@@ -18,6 +18,7 @@ public class EnvironmentDom {
     private String model_package;
     private String marcos_package;
     private String params_package;
+    private String service_name;
     public void setElement(Element element) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         List<Attribute> attributes = element.attributes();
         for (Attribute attribute : attributes) {
@@ -100,5 +101,13 @@ public class EnvironmentDom {
 
     public void setParams_package(String params_package) {
         this.params_package = params_package;
+    }
+
+    public String getService_name() {
+        return service_name;
+    }
+
+    public void setService_name(String service_name) {
+        this.service_name = service_name;
     }
 }
