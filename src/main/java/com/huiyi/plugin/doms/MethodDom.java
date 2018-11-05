@@ -13,6 +13,7 @@ public class MethodDom implements Cloneable {
     private String name;
     private String url;
     private String method;
+    private String req = "";
     private String rep = "";
     private String des;
     private ArrayList<MethodParameterDom> methodParameterDoms;
@@ -94,5 +95,13 @@ public class MethodDom implements Cloneable {
             clone.methodParameterDoms.add((MethodParameterDom) methodParameterDom.clone());
         }
         return clone;
+    }
+
+    public String getReq() {
+        return req;
+    }
+
+    public void setReq(String req) {
+        this.req = req;
     }
 }

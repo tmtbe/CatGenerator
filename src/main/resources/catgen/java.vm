@@ -21,7 +21,7 @@ import io.swagger.annotations.*;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import ${params_package}.*;
-import java.util.List;
+import java.util.*;
 import com.huiyi.base.annotation.HuiyiHttpResult;
 
 @Api("${controller.des}")
@@ -37,10 +37,14 @@ public interface I${controller.name} {
     @$tool.toUpperCaseFirstOneOtherLow(${method.method})Mapping("${method.url}")
 
 #if(${method.methodParameterDoms.size()} == 0)
+#if(${method.req}!="")
+    $tool.typeChange(${method.rep}) ${method.name}(@RequestBody ${method.req} m${method.req}) throws Exception;
+#else
     $tool.typeChange(${method.rep}) ${method.name}() throws Exception ;
+#end
 #else
 #if($tool.toUpperCase(${method.method}) == "POST")
-    $tool.typeChange(${method.rep}) ${method.name}(@RequestBody ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params) throws Exception ;
+    $tool.typeChange(${method.rep}) ${method.name}(@RequestBody ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params) throws Exception;
 #else
     $tool.typeChange(${method.rep}) ${method.name}(${tool.buildGetParam($method.methodParameterDoms,$baseParams)});
 #end
