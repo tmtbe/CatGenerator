@@ -22,7 +22,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import ${params_package}.*;
 import org.springframework.cloud.openfeign.FeignClient;
-import java.util.List;
+import java.util.*;
 
 @FeignClient(name = "${service_name}",fallbackFactory = ${controller.name}FallBackFactory.class)
 @RequestMapping("${controller.url}")
