@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class JavaTool extends BaseTools {
     private Map<String, String> baseType;
-
+    private Map<String, String> casebaseType;
     public JavaTool() {
         baseType = new HashMap<>();
         baseType.put("int", "Integer");
@@ -21,6 +21,15 @@ public class JavaTool extends BaseTools {
         baseType.put("double", "Double");
         baseType.put("date", "Date");
         baseType.put("datetime", "Date");
+
+        casebaseType = new HashMap<>();
+        casebaseType.put("int", "int");
+        casebaseType.put("string", "String");
+        casebaseType.put("bool", "boolean");
+        casebaseType.put("float", "float");
+        casebaseType.put("double", "double");
+        casebaseType.put("date", "Date");
+        casebaseType.put("datetime", "Date");
     }
 
     public String buildGetParam(List<MethodParameterDom> ... methodParameterDoms) {
@@ -101,6 +110,15 @@ public class JavaTool extends BaseTools {
             result = toUpperCaseFirstOne(s);
         }
         return result;
+    }
+
+    //基础类型
+    public String baseCaseType(String s) throws Exception {
+        if (casebaseType.containsKey(s)) {
+            return casebaseType.get(s);
+        } else{
+            throw new Exception("case的类型不对");
+        }
     }
 
     public String getTypeClass(String s) {
