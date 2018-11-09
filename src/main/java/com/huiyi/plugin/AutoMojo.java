@@ -27,6 +27,7 @@ public class AutoMojo extends AbstractMojo {
      * default-value="---"
      */
     private String prefix;
+    private ReadProto readProto;
 
     public void execute() throws MojoExecutionException {
         Build build = project.getBuild();
@@ -39,12 +40,17 @@ public class AutoMojo extends AbstractMojo {
         Scanner s = new Scanner(is).useDelimiter("\\A");
         String result = s.hasNext() ? s.next() : "";
         getLog().info(result);
-        run(filepath, "java");
-        run(filepath, "fegin");
-        run(filepath, "android");
-        run(filepath, "oc");
-        run(filepath, "js");
-        run(filepath, "rabbit");
+        try {
+            ready(filepath);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        run( "java");
+        run( "fegin");
+        run( "android");
+        run( "oc");
+        run( "js");
+        run( "rabbit");
     }
 
     /**
@@ -92,8 +98,9 @@ public class AutoMojo extends AbstractMojo {
             return false;
         }
     }
-    private void run(String filepath, String environmentName) throws MojoExecutionException {
-        ReadProto readProto = new ReadProto();
+
+    private void ready(String filepath) throws Exception {
+        readProto = new ReadProto();
         File file = new File(filepath);
         if (!file.isDirectory()) {  //通过isDirectory()判断当前路径是不是文件夹
             getLog().error("没有发现/resources/catgen/目录");
@@ -108,18 +115,9 @@ public class AutoMojo extends AbstractMojo {
                 }
             }
         }
-        file = new File(filepath + environmentName);
-        if (file.isDirectory()) {
-            String[] filelist = file.list();
-            for (int i = 0; i < filelist.length; i++) {
-                File readfile = new File(filepath + environmentName + "\\" + filelist[i]);    //将输入路径及其子路径相连接
-                if (!readfile.isDirectory()) {
-                    if (filelist[i].endsWith(".xml")) {
-                        readProto.addXml(readfile);
-                    }
-                }
-            }
-        }
+        readProto.ready(getLog());
+    }
+    private void run(String environmentName) throws MojoExecutionException {
         try {
             readProto.run(getLog(), environmentName);
         } catch (Exception e) {

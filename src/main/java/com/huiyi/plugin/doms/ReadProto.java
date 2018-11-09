@@ -1,5 +1,6 @@
 package com.huiyi.plugin.doms;
 
+import org.apache.maven.plugin.logging.Log;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -13,12 +14,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import org.apache.maven.plugin.logging.Log;
+
 public class ReadProto {
     private ArrayList<File> files;
     private ArrayList<ProtoDom> protoDoms;
     private Map<String, ModelDom> modelDoms;
     private Map<String, MarcoFileDom> marcoFileDomMap;
+    private VelocityEngine velocityEngine;
+
     public ReadProto() {
         files = new ArrayList<>();
         protoDoms = new ArrayList<>();
@@ -36,10 +39,7 @@ public class ReadProto {
         files.add(readfile);
     }
 
-    /**
-     * 执行
-     */
-    public void run(Log log,String environmentName) throws Exception {
+    public void ready(Log log) throws Exception {
         //获取所有的proto
         for (File file : files) {
             log.info(file.getAbsolutePath());
@@ -60,21 +60,27 @@ public class ReadProto {
                 marcoFileDomMap.put(marcoFileDom.getName(), marcoFileDom);
             }
         }
-        //输出结果了
-        VelocityEngine ve = new VelocityEngine();
-        ve.setProperty("file.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
-        ve.init();
         for (ProtoDom protoDom : protoDoms) {
             protoDom.compatibleGenerics(modelDoms);
+        }
+        //输出结果了
+        velocityEngine = new VelocityEngine();
+        velocityEngine.setProperty("file.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+        velocityEngine.init();
+    }
+
+    /**
+     * 执行
+     */
+    public void run(Log log, String environmentName) throws Exception {
+        for (ProtoDom protoDom : protoDoms) {
             for (Map.Entry<String, EnvironmentDom> entry : protoDom.getEnvironmentDoms().entrySet()) {
                 EnvironmentDom environment = protoDom.getEnvironmentDoms().get(entry.getKey());
-                if(!environmentName.equals("all")){
-                    if(!environment.getLanguage().equals(environmentName)){
-                        continue;
-                    }
+                if (!environment.getLanguage().equals(environmentName)) {
+                    continue;
                 }
-                log.info("开始生成"+environment.getLanguage()+"代码");
-                Template t = ve.getTemplate("catgen/" + entry.getKey() + ".vm");
+                log.info("开始生成 [" + protoDom.getFile_name() + "] [" + environment.getLanguage() + "] 代码");
+                Template t = velocityEngine.getTemplate("catgen/" + entry.getKey() + ".vm");
                 VelocityContext ctx = new VelocityContext();
                 ctx.put("environment", environment);
                 ctx.put("protoDom", protoDom);
@@ -84,14 +90,12 @@ public class ReadProto {
                 ctx.put("tool", tool);
                 StringWriter sw = new StringWriter();
                 t.merge(ctx, sw);
-                log.info("生成" + entry.getKey() + "协议");
-                readResult(sw, environment,log);
-                if(entry.getKey().equals("fegin")||entry.getKey().equals("java")||entry.getKey().equals("rabbit")){
-                    t = ve.getTemplate("catgen/java-base.vm");
+                readResult(sw, environment, log);
+                if (entry.getKey().equals("fegin") || entry.getKey().equals("java") || entry.getKey().equals("rabbit")) {
+                    t = velocityEngine.getTemplate("catgen/java-base.vm");
                     sw = new StringWriter();
                     t.merge(ctx, sw);
-                    log.info("生成" + entry.getKey() + "协议");
-                    readResult(sw, environment,log);
+                    readResult(sw, environment, log);
                 }
             }
         }
@@ -140,7 +144,7 @@ public class ReadProto {
      * @param message
      * @param environmentDom
      */
-    private void readResult(StringWriter message, EnvironmentDom environmentDom,Log log) throws IOException, DocumentException {
+    private void readResult(StringWriter message, EnvironmentDom environmentDom, Log log) throws IOException, DocumentException {
         SAXReader reader = new SAXReader();
         Document document = reader.read(new ByteArrayInputStream(message.toString().getBytes("UTF-8")));
         Element bookstore = document.getRootElement();
@@ -156,7 +160,13 @@ public class ReadProto {
                 if (!file.exists()) {
                     file.mkdirs();
                 }
-                FileWriter writer = new FileWriter(fileName);
+                FileWriter writer;
+                if (element.attributeValue("append") != null && element.attributeValue("append").equals("true")) {
+                    writer = new FileWriter(fileName, true);
+                    writer.write("\n");
+                } else {
+                    writer = new FileWriter(fileName);
+                }
                 writer.write(element.getText().trim());
                 writer.close();
                 log.info("输出文件：" + fileName);

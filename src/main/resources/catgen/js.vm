@@ -6,125 +6,97 @@
 #set($marcoFiles = $marcoFileDoms)
 #set($baseParams = $protoDom.getBaseParamDoms())
 <proto>
-    <file name="gen.js">
+    <file name="com/huiyi/autogen/gen.js" append="true">
 <![CDATA[
 import axios from 'axios'
 let build = new Build();
 function Build() {
     /**
      * @param json
-     * @param isMock
      * @returns {boolean}
      */
-    this.buildBoolean=function (json,isMock = false) {
+    this.buildBoolean=function (json) {
         if(json==null) return false;
         if(json=='1'||json=='true'||json==1||json==true) return true;
         return false;
     };
     /**
      * @param json
-     * @param isMock
      * @returns {Array.<boolean>}
      */
-    this.buildBoolean_array=function (json,isMock = false) {
+    this.buildBoolean_array=function (json) {
         let result = [];
         if(json==null) {
-            if(isMock){
-                return [false,false,false];
-            }else{
-                return result;
-            }
+            return result;
         }
         for (let k = 0, length = json.length; k < length; k++) {
-            result[k] = this.buildbool(json[k],isMock);
+            result[k] = this.buildbool(json[k]);
         }
         return result;
     };
     /**
      * @param json
-     * @param isMock
      * @returns {int}
      */
-    this.buildNumber=function (json,isMock = false) {
+    this.buildNumber=function (json) {
         if(json==null) return 0;
         return parseInt(json)
     };
     /**
      * @param json
-     * @param isMock
      * @returns {Array.<int>}
      */
-    this.buildNumber_array=function (json,isMock = false) {
+    this.buildNumber_array=function (json) {
         let result = [];
         if(json==null) {
-            if(isMock){
-                return [0,1,2];
-            }else{
-                return result;
-            }
+            return result;
         }
         for (let k = 0, length = json.length; k < length; k++) {
-            result[k] = this.buildint(json[k],isMock);
+            result[k] = this.buildint(json[k]);
         }
         return result;
     };
     /**
      * @param json
-     * @param isMock
      * @returns {string}
      */
-    this.buildString=function(json,isMock = false) {
+    this.buildString=function(json) {
         if(json==null) return "";
         return String(json);
     };
     /**
      * @param json
-     * @param isMock
      * @returns {Array.<string>}
      */
-    this.buildString_array=function (json,isMock = false) {
+    this.buildString_array=function (json) {
         let result = [];
         if(json==null) {
-            if(isMock){
-                return ["test1","test2","test3"];
-            }else{
-                return result;
-            }
+             return result;
         }
         for (let k = 0, length = json.length; k < length; k++) {
-            result[k] = this.buildstring(json[k],isMock);
+            result[k] = this.buildstring(json[k]);
         }
         return result;
     };
 #foreach($model in $models)
     /**
      * @param json
-     * @param isMock
      * @returns {${model.name}}
      */
-    this.build${model.name}=function (json,isMock = false) {
+    this.build${model.name}=function (json) {
         if(json==null) {
-            if(isMock){
-                return new ${model.name}(null,isMock);
-            }else{
-                return null;
-            }
+            return new ${model.name}(null);
         }
         return new ${model.name}(json);
     };
     /**
      * @param json
-     * @param isMock
      * @returns {Array.<${model.name}>}
      */
-    this.build${model.name}_array=function (json,isMock = false) {
+    this.build${model.name}_array=function (json) {
         let result = [];
         if(json==null) {
-            if(isMock){
-                return [new ${model.name}(null),new ${model.name}(null),new ${model.name}(null)];
-            }else{
-                return result;
-            }
+            return result;
         }
         for (let k = 0, length = json.length; k < length; k++) {
             result[k] = this.build${model.name}(json[k]);
@@ -135,14 +107,13 @@ function Build() {
 }
 #foreach($model in $models)
 /** ${model.des} **/
-function ${model.name}(json,isMock=false){
+function ${model.name}(json=false){
 #foreach($parameter in ${model.modelParameterDoms})
     /**
      * ${parameter.name}
-     * @param isMock
      * @type {${tool.desType($parameter.type)}}
      */
-    this.${parameter.name} = build.build${tool.typeChange($parameter.type)}(json&&(json.${parameter.name}!=null)?json.${parameter.name}:null,isMock);
+    this.${parameter.name} = build.build${tool.typeChange($parameter.type)}(json&&(json.${parameter.name}!=null)?json.${parameter.name}:null);
 #end
 }
 #end
@@ -160,6 +131,10 @@ function sendAjax(ajax) {
 
 #foreach($controller in $controllers)
 #foreach($method in ${controller.methodDoms})
+/**
+* ${controller.des}
+* @constructor
+*/
 function ${controller.name}_${method.name}() {
 #foreach($methodParameterDom in ${baseParams})
     /**
@@ -194,8 +169,6 @@ function ${controller.name}_${method.name}() {
 #end
         })
     }
-    this.mock = build.build${tool.typeChange($method.rep)}(null,true);
-    this.testMock = false;
     /**
      * parameter result
      * @type {$tool.desType($method.rep)}
@@ -203,10 +176,6 @@ function ${controller.name}_${method.name}() {
     this.result = null;
     let self = this;
     this.send = async function () {
-        if(self.testMock){
-            self.result = self.mock;
-            return;
-        }
         try {
             let data = await sendAjax(self);
 #if(${tool.isBaseType($method.rep)})
@@ -217,14 +186,16 @@ function ${controller.name}_${method.name}() {
         }catch (e) {
             console.error("[curl error]"+self.url);
             console.error(e);
-            self.result = self.mock;
         }
     }
 }
 export {${controller.name}_${method.name}}
 #end
 #end
+]]>
+    </file>
 
+    <file name="com/huiyi/autogen/gen_marco.js">
 #foreach($marcoFile in $marcoFiles)
 let ${marcoFile.name} = {
 #set($count=$marcoFile.marcoDoms.size())
@@ -232,9 +203,9 @@ let ${marcoFile.name} = {
 #foreach($marco in ${marcoFile.marcoDoms})
 #set($index=$index+1)
     /**
-     * ${marco.des}
-     * @type {${tool.desType($marco.type)}}
-     */
+    * ${marco.des}
+    * @type {${tool.desType($marco.type)}}
+    */
 #if($index==$count)
     $marco.name:${tool.getMarco($marco.type,$marco.value)}
 #else
@@ -243,7 +214,5 @@ let ${marcoFile.name} = {
 #end
 }
 #end
-]]>
     </file>
-
 </proto>
