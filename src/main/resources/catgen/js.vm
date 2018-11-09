@@ -135,30 +135,23 @@ function sendAjax(ajax) {
 * ${method.des}
 * @constructor
 */
-function ${controller.name}_${method.name}() {
+function Rest${controller.name}${tool.toUpperCaseFirstOne($method.name)}() {
 #foreach($methodParameterDom in ${baseParams})
     /**
     * parameter $methodParameterDom.des
     * @type {$tool.desType($methodParameterDom.type)}
     */
-    this.p_${methodParameterDom.name} = build.build${tool.typeChange($methodParameterDom.type)}(null);
+    this.p_${methodParameterDom.name} = null;
 #end
 #foreach($methodParameterDom in ${method.methodParameterDoms})
     /**
      * parameter $methodParameterDom.des
      * @type {$tool.desType($methodParameterDom.type)}
      */
-    this.p_${methodParameterDom.name} = build.build${tool.typeChange($methodParameterDom.type)}(null);
+    this.p_${methodParameterDom.name} = null;
 #end
     this.url = "$environment.baseUrl/$controller.url/$method.url";
     this.type = "$method.method";
-    this.dataType = "json";
-    this.contentType = "application/json";
-    this.timeout = 5000;
-    this.cache = false;
-    this.global = false;
-    this.ifModified = false;
-    this.hearders = {};
     this.data = function(){
         return JSON.stringify({
 #foreach($methodParameterDom in ${baseParams})
@@ -189,7 +182,7 @@ function ${controller.name}_${method.name}() {
         }
     }
 }
-export {${controller.name}_${method.name}}
+export {Rest${controller.name}${tool.toUpperCaseFirstOne($method.name)}}
 #end
 #end
 ]]>
