@@ -132,7 +132,7 @@ function sendAjax(ajax) {
 #foreach($controller in $controllers)
 #foreach($method in ${controller.methodDoms})
 /**
-* ${controller.des}
+* ${method.des}
 * @constructor
 */
 function ${controller.name}_${method.name}() {
