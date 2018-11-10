@@ -113,7 +113,7 @@ public class ReadProto {
                     environmentDom.setRoot_path("local");
                     environmentDom.setTool_class("com.huiyi.plugin.tools.JavaTool");
                     environmentDom.setController_package(MessageFormat.format("com.huiyi.autogen.fegin.{0}", protoDom.getService()));
-                    environmentDom.setParams_package(MessageFormat.format("com.huiyi.autogen.fegin.{0}.params", protoDom.getService()));
+                    environmentDom.setParams_package(MessageFormat.format("com.huiyi.autogen.server.{0}.params", protoDom.getService()));
                     environmentDom.setMarcos_package(MessageFormat.format("com.huiyi.autogen.marcos.{0}", protoDom.getService()));
                     environmentDom.setModel_package("com.huiyi.autogen.model");
                     java_environmentDom.setService_name(protoDom.getService());
