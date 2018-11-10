@@ -93,7 +93,7 @@ public class ReadProto {
     public void run(Log log, String environmentName) throws Exception {
         for (ProtoDom protoDom : protoDoms) {
             if(protoDom.getType()!=null) {
-                EnvironmentDom java_environmentDom = new EnvironmentDom(protoDom.getService());
+                EnvironmentDom java_environmentDom = new EnvironmentDom();
                 java_environmentDom.setLanguage("java");
                 java_environmentDom.setRoot_path("local");
                 java_environmentDom.setTool_class("com.huiyi.plugin.tools.JavaTool");
@@ -108,7 +108,7 @@ public class ReadProto {
                     environmentDomsMap.put("java", java_environmentDom);
                     protoDom.setEnvironmentDoms(environmentDomsMap);
                 } else if (protoDom.getType().equals("in")) {
-                    EnvironmentDom environmentDom = new EnvironmentDom(protoDom.getService());
+                    EnvironmentDom environmentDom = new EnvironmentDom();
                     environmentDom.setLanguage("fegin");
                     environmentDom.setRoot_path("local");
                     environmentDom.setTool_class("com.huiyi.plugin.tools.JavaTool");
@@ -116,14 +116,14 @@ public class ReadProto {
                     environmentDom.setParams_package(MessageFormat.format("com.huiyi.autogen.server.{0}.params", protoDom.getService()));
                     environmentDom.setMarcos_package(MessageFormat.format("com.huiyi.autogen.marcos.{0}", protoDom.getService()));
                     environmentDom.setModel_package("com.huiyi.autogen.model");
-                    java_environmentDom.setService_name(protoDom.getService());
+                    environmentDom.setService_name(protoDom.getService());
                     environmentDom.setNotes("//代码生成工具生成，请勿直接修改");
                     HashMap<String, EnvironmentDom> environmentDomsMap = new HashMap<>();
                     environmentDomsMap.put("java", java_environmentDom);
                     environmentDomsMap.put("fegin", environmentDom);
                     protoDom.setEnvironmentDoms(environmentDomsMap);
                 } else if (protoDom.getType().equals("rabbit")) {
-                    EnvironmentDom environmentDom = new EnvironmentDom(protoDom.getService());
+                    EnvironmentDom environmentDom = new EnvironmentDom();
                     environmentDom.setLanguage("rabbit");
                     environmentDom.setRoot_path("local");
                     environmentDom.setTool_class("com.huiyi.plugin.tools.JavaTool");
@@ -131,7 +131,7 @@ public class ReadProto {
                     environmentDom.setParams_package(MessageFormat.format("com.huiyi.autogen.rabbit.{0}.params", protoDom.getService()));
                     environmentDom.setMarcos_package(MessageFormat.format("com.huiyi.autogen.marcos.{0}", protoDom.getService()));
                     environmentDom.setModel_package("com.huiyi.autogen.model");
-                    java_environmentDom.setService_name(protoDom.getService());
+                    environmentDom.setService_name(protoDom.getService());
                     environmentDom.setNotes("//代码生成工具生成，请勿直接修改");
                     HashMap<String, EnvironmentDom> environmentDomsMap = new HashMap<>();
                     environmentDomsMap.put("rabbit", environmentDom);

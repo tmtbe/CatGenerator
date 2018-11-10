@@ -114,7 +114,7 @@ public class ProtoDom {
     public void setEnvironmentDoms(Element element) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         Iterator envionment = element.elementIterator();
         while (envionment.hasNext()) {
-            EnvironmentDom environmentDom = new EnvironmentDom(this.getService());
+            EnvironmentDom environmentDom = new EnvironmentDom();
             Element envionment_element = (Element) envionment.next();
             environmentDom.setElement(envionment_element);
             environmentDoms.put(environmentDom.getLanguage(), environmentDom);

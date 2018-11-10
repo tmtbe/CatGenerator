@@ -19,19 +19,12 @@ public class EnvironmentDom {
     private String marcos_package;
     private String params_package;
     private String service_name;
-    private String service;
-
-    public EnvironmentDom(String service) {
-        this.service = service;
-    }
-
     public void setElement(Element element) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         List<Attribute> attributes = element.attributes();
         for (Attribute attribute : attributes) {
             Class<EnvironmentDom> clz = EnvironmentDom.class;
             Method mt = clz.getMethod("set" + Help.toUpperCaseFirstOne(attribute.getName()), String.class);
-            String value = attribute.getValue().replaceAll("\\{service\\}",service);
-            mt.invoke(this, value);
+            mt.invoke(this, attribute.getValue());
         }
     }
 
@@ -48,7 +41,7 @@ public class EnvironmentDom {
     }
 
     public void setRoot_path(String root_path) {
-        if (root_path.equals("local")) {
+        if(root_path.equals("local")){
             root_path = Global.LocalPath;
         }
         this.root_path = root_path;
