@@ -17,6 +17,7 @@ public class JavaTool extends BaseTools {
         baseType.put("int", "Integer");
         baseType.put("string", "String");
         baseType.put("bool", "Boolean");
+        baseType.put("long", "Long");
         baseType.put("float", "Float");
         baseType.put("double", "Double");
         baseType.put("date", "Date");
@@ -26,6 +27,7 @@ public class JavaTool extends BaseTools {
         casebaseType.put("int", "int");
         casebaseType.put("string", "String");
         casebaseType.put("bool", "boolean");
+        casebaseType.put("long", "long");
         casebaseType.put("float", "float");
         casebaseType.put("double", "double");
         casebaseType.put("date", "Date");

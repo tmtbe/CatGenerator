@@ -12,6 +12,7 @@ public class JsTool extends BaseTools {
         baseType.put("bool", "Boolean");
         baseType.put("float", "Number");
         baseType.put("double", "Number");
+        baseType.put("long", "Number");
         baseType.put("date", "String");
         baseType.put("datetime", "String");
     }

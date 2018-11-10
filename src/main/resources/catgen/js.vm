@@ -6,7 +6,7 @@
 #set($marcoFiles = $marcoFileDoms)
 #set($baseParams = $protoDom.getBaseParamDoms())
 <proto>
-    <file name="com/huiyi/autogen/gen.js" append="true">
+    <file name="com/huiyi/autogen/gen.js">
 <![CDATA[
 import axios from 'axios'
 let build = new Build();
@@ -105,6 +105,16 @@ function Build() {
     };
 #end
 }
+function sendAjax(ajax) {
+    return axios({
+        url:ajax.url,
+        method:ajax.type,
+        data:ajax.data(),
+        headers: {
+            "Content-Type": "application/json; charset=utf-8;"
+        }
+    })
+}
 #foreach($model in $models)
 /** ${model.des} **/
 function ${model.name}(json=false){
@@ -117,17 +127,6 @@ function ${model.name}(json=false){
 #end
 }
 #end
-
-function sendAjax(ajax) {
-    return axios({
-        url:ajax.url,
-        method:ajax.type,
-        data:ajax.data(),
-        headers: {
-            "Content-Type": "application/json; charset=utf-8;"
-        }
-    })
-}
 
 #foreach($controller in $controllers)
 #foreach($method in ${controller.methodDoms})
@@ -185,10 +184,7 @@ function Rest${controller.name}${tool.toUpperCaseFirstOne($method.name)}() {
 export {Rest${controller.name}${tool.toUpperCaseFirstOne($method.name)}}
 #end
 #end
-]]>
-    </file>
 
-    <file name="com/huiyi/autogen/gen_marco.js">
 #foreach($marcoFile in $marcoFiles)
 let ${marcoFile.name} = {
 #set($count=$marcoFile.marcoDoms.size())
@@ -207,5 +203,5 @@ let ${marcoFile.name} = {
 #end
 }
 #end
-    </file>
+
 </proto>
