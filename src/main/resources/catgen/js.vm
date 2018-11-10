@@ -150,7 +150,7 @@ function Rest${controller.name}${tool.toUpperCaseFirstOne($method.name)}() {
      */
     this.p_${methodParameterDom.name} = null;
 #end
-    this.url = "$environment.baseUrl/$controller.url/$method.url";
+    this.url = "$environment.baseUrl/$controller.service/$controller.url/$method.url";
     this.type = "$method.method";
     this.data = function(){
         return JSON.stringify({
