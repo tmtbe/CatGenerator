@@ -135,7 +135,7 @@ function sendAjax(ajax) {
 * ${method.des}
 * @constructor
 */
-function ${controller.name}_${method.name}() {
+function Rest${controller.name}${tool.toUpperCaseFirstOne($method.name)}() {
 #foreach($methodParameterDom in ${baseParams})
     /**
     * parameter $methodParameterDom.des
@@ -182,7 +182,7 @@ function ${controller.name}_${method.name}() {
         }
     }
 }
-export {${controller.name}_${method.name}}
+export {Rest${controller.name}${tool.toUpperCaseFirstOne($method.name)}}
 #end
 #end
 
