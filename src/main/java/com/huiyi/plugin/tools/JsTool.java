@@ -20,6 +20,7 @@ public class JsTool extends BaseTools {
         return  baseType.containsKey(s);
     }
     public String desType(String s) {
+        if(s==null||s.isEmpty()) return "";
         int arrIndex = s.indexOf("[]");
         boolean isArray = false;
         String result = "";
@@ -41,6 +42,7 @@ public class JsTool extends BaseTools {
 
     //类型转换
     public String typeChange(String s) {
+        if(s==null||s.isEmpty()) return "";
         int arrIndex = s.indexOf("[]");
         boolean isArray = false;
         String result = "";

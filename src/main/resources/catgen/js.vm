@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by 123 (456) -->
 #set($environment = $environment)
-#set($models = $protoDom.getCompatibleGenericsModelDoms())
-#set($controllers = $protoDom.getCompatibleGenericsControllerDoms())
-#set($marcoFiles = $marcoFileDoms)
-#set($baseParams = $protoDom.getBaseParamDoms())
+#set($models = $totalProtoDom.getCompatibleGenericsModelDoms())
+#set($controllers = $totalProtoDom.getCompatibleGenericsControllerDoms())
+#set($marcoFiles = $totalProtoDom.getMarcoFileDoms())
+#set($baseParams = $totalProtoDom.getBaseParamDoms())
 <proto>
-    <file name="com/huiyi/autogen/gen.js">
+    <file name="gen.js">
 <![CDATA[
 import axios from 'axios'
 let build = new Build();
@@ -105,16 +105,6 @@ function Build() {
     };
 #end
 }
-function sendAjax(ajax) {
-    return axios({
-        url:ajax.url,
-        method:ajax.type,
-        data:ajax.data(),
-        headers: {
-            "Content-Type": "application/json; charset=utf-8;"
-        }
-    })
-}
 #foreach($model in $models)
 /** ${model.des} **/
 function ${model.name}(json=false){
@@ -128,13 +118,24 @@ function ${model.name}(json=false){
 }
 #end
 
+function sendAjax(ajax) {
+    return axios({
+        url:ajax.url,
+        method:ajax.type,
+        data:ajax.data(),
+        headers: {
+            "Content-Type": "application/json; charset=utf-8;"
+        }
+    })
+}
+
 #foreach($controller in $controllers)
 #foreach($method in ${controller.methodDoms})
 /**
 * ${method.des}
 * @constructor
 */
-function Rest${controller.name}${tool.toUpperCaseFirstOne($method.name)}() {
+function ${controller.name}_${method.name}() {
 #foreach($methodParameterDom in ${baseParams})
     /**
     * parameter $methodParameterDom.des
@@ -181,7 +182,7 @@ function Rest${controller.name}${tool.toUpperCaseFirstOne($method.name)}() {
         }
     }
 }
-export {Rest${controller.name}${tool.toUpperCaseFirstOne($method.name)}}
+export {${controller.name}_${method.name}}
 #end
 #end
 
@@ -203,5 +204,6 @@ let ${marcoFile.name} = {
 #end
 }
 #end
-
+]]>
+    </file>
 </proto>

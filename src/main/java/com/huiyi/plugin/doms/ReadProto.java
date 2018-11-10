@@ -10,6 +10,7 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
 import java.io.*;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -20,14 +21,17 @@ public class ReadProto {
     private ArrayList<ProtoDom> protoDoms;
     private Map<String, ModelDom> modelDoms;
     private Map<String, MarcoFileDom> marcoFileDomMap;
+    private Map<String, ControllerDom> controllerFileDomMap;
+    private ProtoDom totalProtoDom;
     private VelocityEngine velocityEngine;
 
     public ReadProto() {
         files = new ArrayList<>();
         protoDoms = new ArrayList<>();
         modelDoms = new HashMap<>();
-        modelDoms = new HashMap<>();
         marcoFileDomMap = new HashMap<>();
+        controllerFileDomMap = new HashMap<>();
+        totalProtoDom = new ProtoDom();
     }
 
     /**
@@ -45,8 +49,17 @@ public class ReadProto {
             log.info(file.getAbsolutePath());
             getProto(file);
         }
-        //合并proto的model
+
+        //合并proto的model,marco,controller
         for (ProtoDom protoDom : protoDoms) {
+            if(protoDom.getType()!=null&&protoDom.getType().equals("out")) {
+                for (ControllerDom controllerDom : protoDom.getControllerDoms()) {
+                    if (controllerFileDomMap.containsKey(controllerDom.getName())) {
+                        throw new Exception(controllerDom.getName() + "->Controller重复了");
+                    }
+                    controllerFileDomMap.put(controllerDom.getName(), controllerDom);
+                }
+            }
             for (ModelDom modelDom : protoDom.getModelDoms()) {
                 if (modelDoms.containsKey(modelDom.getName())) {
                     throw new Exception(modelDom.getName() + "->Model重复了");
@@ -60,6 +73,11 @@ public class ReadProto {
                 marcoFileDomMap.put(marcoFileDom.getName(), marcoFileDom);
             }
         }
+        totalProtoDom.setFile_name("全部");
+        totalProtoDom.setControllerDoms(new ArrayList(controllerFileDomMap.values()));
+        totalProtoDom.setMarcoFileDoms(new ArrayList(marcoFileDomMap.values()));
+        totalProtoDom.compatibleGenerics(modelDoms);
+        totalProtoDom.setBaseParamDoms(new ArrayList<>());
         for (ProtoDom protoDom : protoDoms) {
             protoDom.compatibleGenerics(modelDoms);
         }
@@ -74,6 +92,52 @@ public class ReadProto {
      */
     public void run(Log log, String environmentName) throws Exception {
         for (ProtoDom protoDom : protoDoms) {
+            if(protoDom.getType()!=null) {
+                EnvironmentDom java_environmentDom = new EnvironmentDom(protoDom.getService());
+                java_environmentDom.setLanguage("java");
+                java_environmentDom.setRoot_path("local");
+                java_environmentDom.setTool_class("com.huiyi.plugin.tools.JavaTool");
+                java_environmentDom.setController_package(MessageFormat.format("com.huiyi.autogen.server.{0}", protoDom.getService()));
+                java_environmentDom.setParams_package(MessageFormat.format("com.huiyi.autogen.server.{0}.params", protoDom.getService()));
+                java_environmentDom.setMarcos_package(MessageFormat.format("com.huiyi.autogen.marcos.{0}", protoDom.getService()));
+                java_environmentDom.setModel_package("com.huiyi.autogen.model");
+                java_environmentDom.setService_name(protoDom.getService());
+                java_environmentDom.setNotes("//代码生成工具生成，请勿直接修改");
+                if (protoDom.getType().equals("out")) {
+                    HashMap<String, EnvironmentDom> environmentDomsMap = new HashMap<>();
+                    environmentDomsMap.put("java", java_environmentDom);
+                    protoDom.setEnvironmentDoms(environmentDomsMap);
+                } else if (protoDom.getType().equals("in")) {
+                    EnvironmentDom environmentDom = new EnvironmentDom(protoDom.getService());
+                    environmentDom.setLanguage("fegin");
+                    environmentDom.setRoot_path("local");
+                    environmentDom.setTool_class("com.huiyi.plugin.tools.JavaTool");
+                    environmentDom.setController_package(MessageFormat.format("com.huiyi.autogen.fegin.{0}", protoDom.getService()));
+                    environmentDom.setParams_package(MessageFormat.format("com.huiyi.autogen.fegin.{0}.params", protoDom.getService()));
+                    environmentDom.setMarcos_package(MessageFormat.format("com.huiyi.autogen.marcos.{0}", protoDom.getService()));
+                    environmentDom.setModel_package("com.huiyi.autogen.model");
+                    java_environmentDom.setService_name(protoDom.getService());
+                    environmentDom.setNotes("//代码生成工具生成，请勿直接修改");
+                    HashMap<String, EnvironmentDom> environmentDomsMap = new HashMap<>();
+                    environmentDomsMap.put("java", java_environmentDom);
+                    environmentDomsMap.put("fegin", environmentDom);
+                    protoDom.setEnvironmentDoms(environmentDomsMap);
+                } else if (protoDom.getType().equals("rabbit")) {
+                    EnvironmentDom environmentDom = new EnvironmentDom(protoDom.getService());
+                    environmentDom.setLanguage("rabbit");
+                    environmentDom.setRoot_path("local");
+                    environmentDom.setTool_class("com.huiyi.plugin.tools.JavaTool");
+                    environmentDom.setController_package(MessageFormat.format("com.huiyi.autogen.rabbit.{0}", protoDom.getService()));
+                    environmentDom.setParams_package(MessageFormat.format("com.huiyi.autogen.rabbit.{0}.params", protoDom.getService()));
+                    environmentDom.setMarcos_package(MessageFormat.format("com.huiyi.autogen.marcos.{0}", protoDom.getService()));
+                    environmentDom.setModel_package("com.huiyi.autogen.model");
+                    java_environmentDom.setService_name(protoDom.getService());
+                    environmentDom.setNotes("//代码生成工具生成，请勿直接修改");
+                    HashMap<String, EnvironmentDom> environmentDomsMap = new HashMap<>();
+                    environmentDomsMap.put("rabbit", environmentDom);
+                    protoDom.setEnvironmentDoms(environmentDomsMap);
+                }
+            }
             for (Map.Entry<String, EnvironmentDom> entry : protoDom.getEnvironmentDoms().entrySet()) {
                 EnvironmentDom environment = protoDom.getEnvironmentDoms().get(entry.getKey());
                 if (!environment.getLanguage().equals(environmentName)) {
@@ -84,7 +148,7 @@ public class ReadProto {
                 VelocityContext ctx = new VelocityContext();
                 ctx.put("environment", environment);
                 ctx.put("protoDom", protoDom);
-                ctx.put("marcoFileDoms", new ArrayList<>(marcoFileDomMap.values()));
+                ctx.put("totalProtoDom", totalProtoDom);
                 Class clazz = Class.forName(environment.getTool_class());
                 Object tool = clazz.newInstance();
                 ctx.put("tool", tool);
@@ -114,6 +178,8 @@ public class ReadProto {
         protoDom.setFile_name(file.getName().split("\\.")[0]);
         Document document = reader.read(file);
         Element bookstore = document.getRootElement();
+        protoDom.setService(bookstore.attributeValue("service"));
+        protoDom.setType(bookstore.attributeValue("type"));
         Iterator storeit = bookstore.elementIterator();
         while (storeit.hasNext()) {
             Element element = (Element) storeit.next();

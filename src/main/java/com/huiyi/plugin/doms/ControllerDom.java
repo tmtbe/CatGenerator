@@ -16,6 +16,7 @@ public class ControllerDom implements Cloneable {
     private String des;
     private String ttl = "10000";
     private String delay;
+    private String service;
     public ControllerDom() {
         methodDoms = new ArrayList<>();
     }
@@ -93,5 +94,13 @@ public class ControllerDom implements Cloneable {
 
     public void setDelay(String delay) {
         this.delay = delay;
+    }
+
+    public String getService() {
+        return service;
+    }
+
+    public void setService(String service) {
+        this.service = service;
     }
 }

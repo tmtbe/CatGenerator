@@ -17,11 +17,14 @@ public class ProtoDom {
     private ArrayList<ModelDom> modelDoms;
     private HashMap<String, ModelDom> allModelDomMap;
     private ArrayList<MarcoFileDom> marcoFileDoms;
-    private ArrayList<ModelDom> compatibleGenericsModelDoms;
+    private HashMap<String, ModelDom> compatibleGenericsModelDoms;
     private ArrayList<ControllerDom> compatibleGenericsControllerDoms;
     private BaseTools baseTools;
     private JavaTool javaTool;
     private String file_name;
+    private String service;
+    private String type;
+
     public ProtoDom() {
         javaTool = new JavaTool();
         baseParamDoms = new ArrayList<>();
@@ -29,10 +32,34 @@ public class ProtoDom {
         controllerDoms = new ArrayList<>();
         modelDoms = new ArrayList<>();
         marcoFileDoms = new ArrayList<>();
-        compatibleGenericsModelDoms = new ArrayList<>();
+        compatibleGenericsModelDoms = new HashMap<>();
         compatibleGenericsControllerDoms = new ArrayList<>();
         baseTools = new BaseTools();
         allModelDomMap = new HashMap<>();
+    }
+
+    public void setFile_name(String file_name) {
+        this.file_name = file_name;
+    }
+
+    public void setEnvironmentDoms(HashMap<String, EnvironmentDom> environmentDoms) {
+        this.environmentDoms = environmentDoms;
+    }
+
+    public void setBaseParamDoms(ArrayList<MethodParameterDom> baseParamDoms) {
+        this.baseParamDoms = baseParamDoms;
+    }
+
+    public void setControllerDoms(ArrayList<ControllerDom> controllerDoms) {
+        this.controllerDoms = controllerDoms;
+    }
+
+    public void setModelDoms(ArrayList<ModelDom> modelDoms) {
+        this.modelDoms = modelDoms;
+    }
+
+    public void setMarcoFileDoms(ArrayList<MarcoFileDom> marcoFileDoms) {
+        this.marcoFileDoms = marcoFileDoms;
     }
 
     public ArrayList<ControllerDom> getControllerDoms() {
@@ -42,6 +69,7 @@ public class ProtoDom {
     public void setControllerDoms(Element element) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         ControllerDom controllerDom = new ControllerDom();
         controllerDom.setElement(element);
+        controllerDom.setService(this.service);
         controllerDoms.add(controllerDom);
     }
 
@@ -86,7 +114,7 @@ public class ProtoDom {
     public void setEnvironmentDoms(Element element) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         Iterator envionment = element.elementIterator();
         while (envionment.hasNext()) {
-            EnvironmentDom environmentDom = new EnvironmentDom();
+            EnvironmentDom environmentDom = new EnvironmentDom(this.getService());
             Element envionment_element = (Element) envionment.next();
             environmentDom.setElement(envionment_element);
             environmentDoms.put(environmentDom.getLanguage(), environmentDom);
@@ -94,7 +122,7 @@ public class ProtoDom {
     }
 
     public ArrayList<ModelDom> getCompatibleGenericsModelDoms() {
-        return compatibleGenericsModelDoms;
+        return new ArrayList<>(compatibleGenericsModelDoms.values());
     }
 
     public ArrayList<ControllerDom> getCompatibleGenericsControllerDoms() {
@@ -114,16 +142,16 @@ public class ProtoDom {
             ControllerDom clone = (ControllerDom) controllerDom.clone();
             compatibleGenericsControllerDoms.add(clone);
             for (MethodDom methodDom : clone.getMethodDoms()) {
-                for (MethodParameterDom methodParameterDom : methodDom.getMethodParameterDoms()){
+                for (MethodParameterDom methodParameterDom : methodDom.getMethodParameterDoms()) {
                     String mpType = javaTool.baseType(methodParameterDom.getType());
-                    if(javaTool.isBaseType(mpType)) continue;
+                    if (javaTool.isBaseType(mpType)) continue;
                     ModelDom needModel = modelDomMap.get(mpType);
                     if (needModel == null) {
                         throw new Exception(mpType + "->没有找到对应的Model");
                     }
                     modelDoms.add(needModel);
                 }
-                if(methodDom.getRep().equals("")) continue;
+                if (methodDom.getRep().equals("")) continue;
                 int index = methodDom.getRep().indexOf("{");
                 if (index > 0) {
                     String baseClass = methodDom.getRep().substring(0, index);
@@ -132,7 +160,7 @@ public class ProtoDom {
                     newModel(baseClass, tclass, modelDomMap);
                     methodDom.setRep(baseClass + "_" + baseTools.typeToClassString(tclass));
                     //寻找需要的model并添加进来
-                    if(javaTool.isBaseType(tclass)) continue;
+                    if (javaTool.isBaseType(tclass)) continue;
                     ModelDom needModel = modelDomMap.get(tclass);
                     if (needModel == null) {
                         throw new Exception(tclass + "->没有找到对应的Model");
@@ -146,7 +174,7 @@ public class ProtoDom {
                 } else {
                     //寻找需要的model并添加进来
                     String bastype = javaTool.baseType(methodDom.getRep());
-                    if(javaTool.isBaseType(bastype)) continue;
+                    if (javaTool.isBaseType(bastype)) continue;
                     ModelDom needModel = modelDomMap.get(bastype);
                     if (needModel == null) {
                         throw new Exception(javaTool.baseType(methodDom.getRep()) + "->没有找到对应的Model");
@@ -156,8 +184,8 @@ public class ProtoDom {
             }
         }
         //寻找标志used的model
-        for (ModelDom modelDom:modelDomMap.values()) {
-            if(modelDom.getUsed()!=null&&modelDom.getUsed().trim().toLowerCase().equals("true")){
+        for (ModelDom modelDom : modelDomMap.values()) {
+            if (modelDom.getUsed() != null && modelDom.getUsed().trim().toLowerCase().equals("true")) {
                 modelDoms.add(modelDom);
             }
         }
@@ -186,7 +214,7 @@ public class ProtoDom {
                 }
             }
             if (needClone) {
-                compatibleGenericsModelDoms.add((ModelDom) modelDom.clone());
+                compatibleGenericsModelDoms.put(modelDom.getName(), (ModelDom) modelDom.clone());
             }
         }
 
@@ -228,7 +256,7 @@ public class ProtoDom {
                 modelParameterDom.setType(tclass);
             }
         }
-        compatibleGenericsModelDoms.add(clone);
+        compatibleGenericsModelDoms.put(clone.getName(), clone);
 
     }
 
@@ -236,7 +264,19 @@ public class ProtoDom {
         return file_name;
     }
 
-    public void setFile_name(String file_name) {
-        this.file_name = file_name;
+    public String getService() {
+        return service;
+    }
+
+    public void setService(String service) {
+        this.service = service;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }
