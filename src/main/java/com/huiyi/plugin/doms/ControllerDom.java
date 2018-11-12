@@ -1,5 +1,6 @@
 package com.huiyi.plugin.doms;
 
+import com.huiyi.plugin.tools.BaseTools;
 import org.dom4j.Attribute;
 import org.dom4j.Element;
 
@@ -17,6 +18,7 @@ public class ControllerDom implements Cloneable {
     private String ttl = "10000";
     private String delay;
     private String service;
+
     public ControllerDom() {
         methodDoms = new ArrayList<>();
     }
@@ -34,6 +36,10 @@ public class ControllerDom implements Cloneable {
             Element method_element = (Element) method.next();
             methodDom.setElement(method_element);
             methodDoms.add(methodDom);
+        }
+        this.name = BaseTools.getInstance().toUpperCaseFirstOne(this.name);
+        if (this.url == null || this.url.isEmpty()) {
+            this.url = BaseTools.getInstance().toLowerCaseFirstOne(this.name);
         }
     }
 

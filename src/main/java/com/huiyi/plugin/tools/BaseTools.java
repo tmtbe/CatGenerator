@@ -5,7 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BaseTools {
-
+    public static BaseTools tools;
+    public static BaseTools getInstance(){
+        if(tools==null){
+            tools = new BaseTools();
+        }
+        return tools;
+    }
     //转大写
     public String toUpperCase(String s) {
         return s.toUpperCase();
@@ -19,6 +25,10 @@ public class BaseTools {
     //首字母转大写
     public String toUpperCaseFirstOne(String s) {
         return s.substring(0, 1).toUpperCase().concat(s.substring(1));
+    }
+    //首字母转小写
+    public String toLowerCaseFirstOne(String s) {
+        return s.substring(0, 1).toLowerCase().concat(s.substring(1));
     }
     //类型是否为数组
     public boolean typeIsArray(String s){

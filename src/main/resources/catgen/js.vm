@@ -119,14 +119,25 @@ function ${model.name}(json=false){
 #end
 
 function sendAjax(ajax) {
-    return axios({
-        url:ajax.url,
-        method:ajax.type,
-        data:ajax.data(),
-        headers: {
-            "Content-Type": "application/json; charset=utf-8;"
-        }
-    })
+    if(ajax.type==="POST"){
+        return axios({
+            url:ajax.url,
+            method:ajax.type,
+            data:JSON.stringify(ajax.data()),
+            headers: {
+                "Content-Type": "application/json; charset=utf-8;"
+            }
+        })
+    }else{
+        return axios({
+            url:ajax.url,
+            method:ajax.type,
+            params:ajax.data(),
+            headers: {
+                "Content-Type": "application/json; charset=utf-8;"
+            }
+        })
+    }
 }
 
 #foreach($controller in $controllers)
@@ -151,16 +162,16 @@ function Rest${controller.name}${tool.toUpperCaseFirstOne($method.name)}() {
     this.p_${methodParameterDom.name} = null;
 #end
     this.url = "$environment.baseUrl/$controller.service/$controller.url/$method.url";
-    this.type = "$method.method";
+    this.type = "${tool.toUpperCase($method.method)}";
     this.data = function(){
-        return JSON.stringify({
+        return {
 #foreach($methodParameterDom in ${baseParams})
             ${methodParameterDom.name}:this.p_${methodParameterDom.name},
 #end
 #foreach($methodParameterDom in ${method.methodParameterDoms})
             ${methodParameterDom.name}:this.p_${methodParameterDom.name},
 #end
-        })
+        }
     }
     /**
      * parameter result

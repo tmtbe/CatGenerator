@@ -1,5 +1,6 @@
 package com.huiyi.plugin.doms;
 
+import com.huiyi.plugin.tools.BaseTools;
 import org.dom4j.Attribute;
 import org.dom4j.Element;
 
@@ -35,6 +36,10 @@ public class MethodDom implements Cloneable {
             Element param_element = (Element) param.next();
             methodParameterDom.setElement(param_element);
             methodParameterDoms.add(methodParameterDom);
+        }
+        this.name = BaseTools.getInstance().toLowerCaseFirstOne(this.name);
+        if (this.url == null || this.url.isEmpty()) {
+            this.url = this.name;
         }
     }
 
