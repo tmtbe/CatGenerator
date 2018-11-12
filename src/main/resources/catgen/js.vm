@@ -110,7 +110,7 @@ function Build() {
 function ${model.name}(json=false){
 #foreach($parameter in ${model.modelParameterDoms})
     /**
-     * ${parameter.name}
+     * ${parameter.des}
      * @type {${tool.desType($parameter.type)}}
      */
     this.${parameter.name} = build.build${tool.typeChange($parameter.type)}(json&&(json.${parameter.name}!=null)?json.${parameter.name}:null);
