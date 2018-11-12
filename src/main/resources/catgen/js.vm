@@ -193,7 +193,7 @@ function Rest${controller.name}${tool.toUpperCaseFirstOne($method.name)}() {
         }
     }
 }
-export {Rest${controller.name}${tool.toUpperCaseFirstOne($method.name)}}
+
 #end
 #end
 
@@ -214,6 +214,13 @@ let ${marcoFile.name} = {
 #end
 #end
 }
+#end
+
+#foreach($controller in $controllers)
+#foreach($method in ${controller.methodDoms})
+//  [$controller.des]     $method.des
+export {Rest${controller.name}${tool.toUpperCaseFirstOne($method.name)}}
+#end
 #end
 ]]>
     </file>
