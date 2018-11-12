@@ -103,13 +103,14 @@ public class ${tool.baseType($model.name)} implements Serializable, Cloneable {
 <file name="${tool.getPath($params_package)}base/BaseParams.java">
     <![CDATA[
 package ${params_package}.base;
+import com.huiyi.base.IBaseParam;
 import io.swagger.annotations.*;
 import lombok.*;
 import java.io.*;
 
 @Data
 @ApiModel
-public class BaseParams implements Serializable, Cloneable {
+public class BaseParams implements Serializable, Cloneable, IBaseParam {
 #foreach($methodParameterDom in ${baseParams})
     @ApiModelProperty("${methodParameterDom.des}")
     private $tool.typeChange(${methodParameterDom.type}) ${methodParameterDom.name};
