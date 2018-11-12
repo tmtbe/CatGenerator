@@ -46,7 +46,7 @@ public interface I${controller.name} {
 #if($tool.toUpperCase(${method.method}) == "POST")
     $tool.typeChange(${method.rep}) ${method.name}(@RequestBody ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params) throws Exception;
 #else
-    $tool.typeChange(${method.rep}) ${method.name}(${tool.buildGetParam($method.methodParameterDoms,$baseParams)});
+    $tool.typeChange(${method.rep}) ${method.name}(${tool.buildGetParam($method.methodParameterDoms,$baseParams)}) throws Exception;
 #end
 #end
 #end
