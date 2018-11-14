@@ -9,6 +9,7 @@
     <file name="gen.js">
 <![CDATA[
 import axios from 'axios'
+let baseUrl = "$environment.baseUrl";
 let build = new Build();
 function Build() {
     /**
@@ -161,7 +162,7 @@ function Rest${controller.name}${tool.toUpperCaseFirstOne($method.name)}() {
      */
     this.p_${methodParameterDom.name} = null;
 #end
-    this.url = "$environment.baseUrl/$controller.service/$controller.url/$method.url";
+    this.url = baseUrl+"/$controller.service/$controller.url/$method.url";
     this.type = "${tool.toUpperCase($method.method)}";
     this.data = function(){
         return {
