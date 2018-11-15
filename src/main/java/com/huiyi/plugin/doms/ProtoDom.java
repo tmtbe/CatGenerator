@@ -156,9 +156,9 @@ public class ProtoDom {
                 if (index > 0) {
                     String baseClass = methodDom.getRep().substring(0, index);
                     String tclass = methodDom.getRep().substring(index + 1, methodDom.getRep().length() - 1);
-                    tclass = javaTool.baseType(tclass);
                     newModel(baseClass, tclass, modelDomMap);
                     methodDom.setRep(baseClass + "_" + baseTools.typeToClassString(tclass));
+                    tclass = javaTool.baseType(tclass);
                     //寻找需要的model并添加进来
                     if (javaTool.isBaseType(tclass)) continue;
                     ModelDom needModel = modelDomMap.get(tclass);
