@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import ${params_package}.*;
 import java.util.*;
 
-@Api("${controller.des}")
+@Api(tags="${controller.des}")
 @RequestMapping("${controller.url}")
 public interface I${controller.name} {
 #foreach($method in ${controller.methodDoms})

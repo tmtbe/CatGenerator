@@ -121,7 +121,6 @@ import com.huiyi.base.IBaseParam;
 import io.swagger.annotations.*;
 import lombok.*;
 import java.io.*;
-import javax.validation.constraints.NotNull;
 import com.huiyi.base.annotation.SensitiveInfo;
 import com.huiyi.base.utils.SensitiveInfoUtils;
 import com.huiyi.base.HuiyiException;
@@ -130,9 +129,10 @@ import com.huiyi.base.HuiyiException;
 @ApiModel
 public class BaseParams implements Serializable, Cloneable, IBaseParam {
 #foreach($methodParameterDom in ${baseParams})
-    @ApiModelProperty("${methodParameterDom.des}")
 #if($methodParameterDom.required=="true")
-    @NotNull
+    @ApiModelProperty(value = "${methodParameterDom.des}", required = true)
+#else
+    @ApiModelProperty("${methodParameterDom.des}")
 #end
 #if($methodParameterDom.sen)
     @SensitiveInfo(type = SensitiveInfoUtils.SensitiveType.$methodParameterDom.sen)
@@ -173,7 +173,6 @@ import java.util.*;
 import java.io.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.alibaba.fastjson.annotation.JSONField;
-import javax.validation.constraints.NotNull;
 import com.huiyi.base.annotation.SensitiveInfo;
 import com.huiyi.base.utils.SensitiveInfoUtils;
 import com.huiyi.base.HuiyiException;
@@ -192,9 +191,10 @@ public class ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params e
     @JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd HH:mm:ss")
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
 #end
-    @ApiModelProperty("${methodParameterDom.des}")
 #if($methodParameterDom.required=="true")
-    @NotNull
+    @ApiModelProperty(value = "${methodParameterDom.des}", required = true)
+#else
+    @ApiModelProperty("${methodParameterDom.des}")
 #end
 #if($methodParameterDom.sen)
     @SensitiveInfo(type = SensitiveInfoUtils.SensitiveType.$methodParameterDom.sen)
