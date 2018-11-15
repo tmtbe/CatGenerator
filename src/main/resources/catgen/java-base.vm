@@ -124,6 +124,7 @@ import java.io.*;
 import javax.validation.constraints.NotNull;
 import com.huiyi.base.annotation.SensitiveInfo;
 import com.huiyi.base.utils.SensitiveInfoUtils;
+import com.huiyi.base.HuiyiException;
 
 @Data
 @ApiModel
@@ -138,13 +139,12 @@ public class BaseParams implements Serializable, Cloneable, IBaseParam {
 #end
     private $tool.typeChange(${methodParameterDom.type}) ${methodParameterDom.name};
 #end
-    public boolean checkRequired() {
+    public void checkRequired() throws HuiyiException {
 #foreach($methodParameterDom in ${method.methodParameterDoms})
 #if($methodParameterDom.required=="true")
-        if (${methodParameterDom.name} == null) return false;
+        if (${methodParameterDom.name} == null) throw new HuiyiException("缺少参数${methodParameterDom.name}");
 #end
 #end
-        return true;
     }
 
     public Object deepClone() throws IOException, ClassNotFoundException {
@@ -176,6 +176,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 import javax.validation.constraints.NotNull;
 import com.huiyi.base.annotation.SensitiveInfo;
 import com.huiyi.base.utils.SensitiveInfoUtils;
+import com.huiyi.base.HuiyiException;
 
 @Data
 @AllArgsConstructor
@@ -202,14 +203,13 @@ public class ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params e
 
 #end
 
-    public boolean checkRequired() {
-        if (!super.checkRequired()) return false;
+    public void checkRequired() throws HuiyiException {
+        super.checkRequired();
 #foreach($methodParameterDom in ${method.methodParameterDoms})
 #if($methodParameterDom.required=="true")
-        if (${methodParameterDom.name} == null) return false;
+        if (${methodParameterDom.name} == null) throw new HuiyiException("miss params: ${methodParameterDom.name}");
 #end
 #end
-        return true;
     }
     public ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params clone() throws CloneNotSupportedException {
         return (${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params) super.clone();
