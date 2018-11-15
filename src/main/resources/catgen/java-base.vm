@@ -84,6 +84,15 @@ public class ${tool.baseType($model.name)} implements Serializable, Cloneable {
     public static ${tool.baseType($model.name)} fromObject(String str)  {
         return JSON.parseObject(str,${tool.baseType($model.name)}.class);
     }
+    public static <T> ArrayList<${tool.baseType($model.name)}> formList(List<T> list){
+        ArrayList<${tool.baseType($model.name)}> result = new ArrayList<>();
+        for (T one:list) {
+            ${tool.baseType($model.name)} m${tool.baseType($model.name)} = new ${tool.baseType($model.name)}();
+            m${tool.baseType($model.name)}.copyFrom(one);
+            result.add(m${tool.baseType($model.name)});
+        }
+        return result;
+    }
 #end
     public ${tool.baseType($model.name)} copyFrom(Object o){
         BeanUtils.copyProperties(o,this);
@@ -99,16 +108,6 @@ public class ${tool.baseType($model.name)} implements Serializable, Cloneable {
         ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
         ObjectInputStream ois = new ObjectInputStream(bis);
         return (${tool.baseType($model.name)}) ois.readObject();
-    }
-
-    public static <T> ArrayList<${tool.baseType($model.name)}> formList(List<T> list){
-        ArrayList<${tool.baseType($model.name)}> result = new ArrayList<>();
-        for (T one:list) {
-            ${tool.baseType($model.name)} m${tool.baseType($model.name)} = new ${tool.baseType($model.name)}();
-            m${tool.baseType($model.name)}.copyFrom(one);
-            result.add(m${tool.baseType($model.name)});
-        }
-        return result;
     }
 }
 ]]>
