@@ -24,6 +24,8 @@ import java.io.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.alibaba.fastjson.annotation.JSONField;
 import org.springframework.beans.BeanUtils;
+import com.huiyi.base.annotation.SensitiveInfo;
+import com.huiyi.base.utils.SensitiveInfoUtils;
 
 @Data
 @AllArgsConstructor
@@ -43,6 +45,9 @@ public class ${tool.baseType($model.name)} implements Serializable, Cloneable {
 #elseif(${tool.toLower($parameter.type)}=="datetime")
     @JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd HH:mm:ss")
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
+#end
+#if($parameter.sen)
+    @SensitiveInfo(type = SensitiveInfoUtils.SensitiveType.$parameter.sen)
 #end
     private $tool.typeChange(${parameter.type}) ${parameter.name};
 
@@ -107,12 +112,21 @@ import com.huiyi.base.IBaseParam;
 import io.swagger.annotations.*;
 import lombok.*;
 import java.io.*;
+import javax.validation.constraints.NotNull;
+import com.huiyi.base.annotation.SensitiveInfo;
+import com.huiyi.base.utils.SensitiveInfoUtils;
 
 @Data
 @ApiModel
 public class BaseParams implements Serializable, Cloneable, IBaseParam {
 #foreach($methodParameterDom in ${baseParams})
     @ApiModelProperty("${methodParameterDom.des}")
+#if($methodParameterDom.required=="true")
+    @NotNull
+#end
+#if($methodParameterDom.sen)
+    @SensitiveInfo(type = SensitiveInfoUtils.SensitiveType.$methodParameterDom.sen)
+#end
     private $tool.typeChange(${methodParameterDom.type}) ${methodParameterDom.name};
 #end
     public boolean checkRequired() {
@@ -150,6 +164,9 @@ import java.util.*;
 import java.io.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.alibaba.fastjson.annotation.JSONField;
+import javax.validation.constraints.NotNull;
+import com.huiyi.base.annotation.SensitiveInfo;
+import com.huiyi.base.utils.SensitiveInfoUtils;
 
 @Data
 @AllArgsConstructor
@@ -166,8 +183,16 @@ public class ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params e
     @JSONField(format="yyyy-MM-dd HH:mm:ss")
 #end
     @ApiModelProperty("${methodParameterDom.des}")
-    private $tool.typeChange(${methodParameterDom.type}) ${methodParameterDom.name};
+#if($methodParameterDom.required=="true")
+    @NotNull
 #end
+#if($methodParameterDom.sen)
+    @SensitiveInfo(type = SensitiveInfoUtils.SensitiveType.$methodParameterDom.sen)
+#end
+    private $tool.typeChange(${methodParameterDom.type}) ${methodParameterDom.name};
+
+#end
+
     public boolean checkRequired() {
         if (!super.checkRequired()) return false;
 #foreach($methodParameterDom in ${method.methodParameterDoms})

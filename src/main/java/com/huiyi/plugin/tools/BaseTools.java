@@ -94,4 +94,27 @@ public class BaseTools {
             return value;
         }
     }
+
+    public String getAutoSen(String name){
+        String checkeName = name.toLowerCase();
+        if(checkeName.indexOf("name")>0){
+            return "CHINESE_NAME";
+        }else if(checkeName.indexOf("name")>0){
+            return "CHINESE_NAME";
+        }else if(checkeName.indexOf("bank")>0){
+            return "BANK_CARD";
+        }else if(checkeName.indexOf("card")>0){
+            return "ID_CARD";
+        }else if(checkeName.indexOf("phone")>0){
+            return "MOBILE_PHONE";
+        }else if(checkeName.indexOf("mobile")>0){
+            return "MOBILE_PHONE";
+        }else if(checkeName.indexOf("address")>0){
+            return "ADDRESS";
+        }else if(checkeName.indexOf("email")>0){
+            return "EMAIL";
+        }else{
+            return "AUTO";
+        }
+    }
 }
