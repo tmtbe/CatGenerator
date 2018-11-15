@@ -25,7 +25,7 @@ public class MethodParameterDom implements Cloneable {
         if(sen!=null) {
             sen = sen.toUpperCase();
             if (sen.equals("AUTO")) {
-                sen = BaseTools.getInstance().getAutoSen(sen);
+                sen = BaseTools.getInstance().getAutoSen(name);
             }
         }
     }

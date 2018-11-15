@@ -97,21 +97,19 @@ public class BaseTools {
 
     public String getAutoSen(String name){
         String checkeName = name.toLowerCase();
-        if(checkeName.indexOf("name")>0){
+        if(checkeName.contains("name")){
             return "CHINESE_NAME";
-        }else if(checkeName.indexOf("name")>0){
-            return "CHINESE_NAME";
-        }else if(checkeName.indexOf("bank")>0){
+        }else if(checkeName.contains("bank")){
             return "BANK_CARD";
-        }else if(checkeName.indexOf("card")>0){
+        }else if(checkeName.contains("card")){
             return "ID_CARD";
-        }else if(checkeName.indexOf("phone")>0){
+        }else if(checkeName.contains("phone")){
             return "MOBILE_PHONE";
-        }else if(checkeName.indexOf("mobile")>0){
+        }else if(checkeName.contains("mobile")){
             return "MOBILE_PHONE";
-        }else if(checkeName.indexOf("address")>0){
+        }else if(checkeName.contains("address")){
             return "ADDRESS";
-        }else if(checkeName.indexOf("email")>0){
+        }else if(checkeName.contains("email")){
             return "EMAIL";
         }else{
             return "AUTO";
