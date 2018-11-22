@@ -48,6 +48,23 @@ import org.springframework.amqp.rabbit.annotation.Queue;
             key = "${controller.url}.failed"
         )
     })
+ @RabbitListener(bindings = {
+        @QueueBinding(value = @Queue(value = "${controller.url}.retry",
+                arguments = {
+                        @Argument(name = "x-dead-letter-exchange", value = "async"),
+                        @Argument(name = "x-dead-letter-routing-key", value = "${controller.url}"),
+                        @Argument(name = "x-message-ttl", value = "10000", type = "java.lang.Integer")
+                }),
+                exchange = @Exchange(value = "${service_name}", type = "topic"),
+                key = "${controller.url}.retry"
+        )
+}, autoStartup = "false")
+@RabbitListener(bindings = {
+        @QueueBinding(value = @Queue(value = "${controller.url}.failed"),
+                exchange = @Exchange(value = "${service_name}", type = "topic"),
+                key = "${controller.url}.failed"
+        )
+}, autoStartup = "false")
 #else
 @RabbitListener(bindings = {
         @QueueBinding(value = @Queue(value = "${controller.url}",
