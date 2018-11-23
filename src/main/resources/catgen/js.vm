@@ -75,7 +75,7 @@ function Build() {
              return result;
         }
         for (let k = 0, length = json.length; k < length; k++) {
-            result[k] = this.buildstring(json[k]);
+            result[k] = this.buildString(json[k]);
         }
         return result;
     };
