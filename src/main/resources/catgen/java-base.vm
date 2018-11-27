@@ -26,11 +26,13 @@ import com.alibaba.fastjson.annotation.JSONField;
 import org.springframework.beans.BeanUtils;
 import com.huiyi.base.annotation.SensitiveInfo;
 import com.huiyi.base.utils.SensitiveInfoUtils;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 /**
  * ${model.des}
  */
