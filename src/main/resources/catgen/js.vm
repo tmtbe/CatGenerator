@@ -9,6 +9,7 @@
     <file name="gen.js">
 <![CDATA[
 import axios from 'axios'
+import storage from "assets/js/storage"
 let baseUrl = "$environment.baseUrl";
 let build = new Build();
 function Build() {
@@ -126,7 +127,8 @@ function sendAjax(ajax) {
             method:ajax.type,
             data:JSON.stringify(ajax.data()),
             headers: {
-                "Content-Type": "application/json; charset=utf-8;"
+                "Content-Type": "application/json; charset=utf-8;",
+                "jwt": storage.getStorage("jwt")
             }
         })
     }else{
@@ -135,7 +137,8 @@ function sendAjax(ajax) {
             method:ajax.type,
             params:ajax.data(),
             headers: {
-                "Content-Type": "application/json; charset=utf-8;"
+                "Content-Type": "application/json; charset=utf-8;",
+                "jwt": storage.getStorage("jwt")
             }
         })
     }
