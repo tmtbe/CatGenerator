@@ -191,6 +191,12 @@ function Rest${controller.name}${tool.toUpperCaseFirstOne($method.name)}() {
         }catch (e) {
             console.error("[curl error]"+self.url);
             console.error(e);
+#if(${tool.isBaseType($method.rep)})
+            self.result = build.build${tool.typeChange($method.rep)}(data.data);
+#else
+            self.result = new ${tool.typeChange($method.rep)}(false);
+#end
+            self.result.status = BaseMarco.CODE_INTER_FAIL;
         }
     }
 }
