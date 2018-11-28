@@ -155,6 +155,7 @@ function Rest${controller.name}${tool.toUpperCaseFirstOne($method.name)}() {
     /**
     * parameter $methodParameterDom.des
     * @type {$tool.desType($methodParameterDom.type)}
+    * @required ${methodParameterDom.required}
     */
     this.p_${methodParameterDom.name} = null;
 #end
@@ -162,6 +163,7 @@ function Rest${controller.name}${tool.toUpperCaseFirstOne($method.name)}() {
     /**
      * parameter $methodParameterDom.des
      * @type {$tool.desType($methodParameterDom.type)}
+     * @required ${methodParameterDom.required}
      */
     this.p_${methodParameterDom.name} = null;
 #end
