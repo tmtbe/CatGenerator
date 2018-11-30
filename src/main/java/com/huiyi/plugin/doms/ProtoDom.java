@@ -239,6 +239,9 @@ public class ProtoDom {
                     throw new Exception(type + "->没有找到对应的Model");
                 }
                 allModelDomMap.put(type, modelDom1);
+                if(modelDom1==modelDom){
+                    return;
+                }
                 getAllModel(modelDom1, modelDomMap);
             }
         }
