@@ -7,14 +7,22 @@ public class JsTool extends BaseTools {
     private Map<String, String> baseType;
     public JsTool() {
         baseType = new HashMap<>();
+        baseType.put("Integer", "Number");
         baseType.put("int", "Number");
         baseType.put("string", "String");
+        baseType.put("String", "String");
         baseType.put("bool", "Boolean");
+        baseType.put("Boolean", "Boolean");
         baseType.put("float", "Number");
+        baseType.put("Float", "Number");
         baseType.put("double", "Number");
+        baseType.put("Double", "Number");
         baseType.put("long", "Number");
+        baseType.put("Long", "Number");
         baseType.put("date", "String");
+        baseType.put("Date", "String");
         baseType.put("datetime", "String");
+        baseType.put("Datetime", "String");
     }
     public Boolean isBaseType(String s) {
         return  baseType.containsKey(s);
