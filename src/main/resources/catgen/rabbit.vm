@@ -45,7 +45,7 @@ import org.springframework.amqp.rabbit.annotation.Queue;
                 @Argument(name = "x-max-priority", value = "10", type = "java.lang.Integer")
             }),
             exchange = @Exchange(value = "${service_name}", type = "topic"),
-            key = "${controller.url}.failed"
+            key = "${controller.url}"
         )
     })
  @RabbitListener(bindings = {
