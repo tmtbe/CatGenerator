@@ -32,7 +32,7 @@ function Build() {
             return result;
         }
         for (let k = 0, length = json.length; k < length; k++) {
-            result[k] = this.buildbool(json[k]);
+            result[k] = this.buildBoolean(json[k]);
         }
         return result;
     };
@@ -54,7 +54,7 @@ function Build() {
             return result;
         }
         for (let k = 0, length = json.length; k < length; k++) {
-            result[k] = this.buildint(json[k]);
+            result[k] = this.buildNumber(json[k]);
         }
         return result;
     };
@@ -210,6 +210,9 @@ function Rest${controller.name}${tool.toUpperCaseFirstOne($method.name)}() {
 #end
 
 #foreach($marcoFile in $marcoFiles)
+/**
+* ${marcoFile.des}
+*/
 let ${marcoFile.name} = {
 #set($count=$marcoFile.marcoDoms.size())
 #set($index=0)
@@ -226,6 +229,7 @@ let ${marcoFile.name} = {
 #end
 #end
 }
+export {${marcoFile.name}}
 #end
 
 #foreach($controller in $controllers)

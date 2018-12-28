@@ -172,5 +172,119 @@ public class ${controller.name}ProducerHandler {
 }
         ]]>
     </file>
+
+
+<file name="${tool.getPath($controller_package)}ONS${controller.name}ConsumerHandler.java">
+        <![CDATA[
+${environment.notes}
+package ${controller_package};
+import ${model_package}.*;
+import ${params_package}.*;
+import java.util.*;
+import org.springframework.amqp.rabbit.annotation.*;
+import com.rabbitmq.client.Channel;
+import org.springframework.amqp.core.Message;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.amqp.rabbit.annotation.Queue;
+
+@ConditionalOnProperty(prefix = "spring.rabbitmq", name = "host")
+@RabbitListener(bindings = {
+        @QueueBinding(value = @Queue(value = "${controller.url}.ons",
+                arguments = {
+                    @Argument(name = "x-max-priority", value = "10", type = "java.lang.Integer")
+                }),
+                exchange = @Exchange(value = "${service_name}", type = "topic"),
+                key = "${controller.url}.ons"
+        )
+})
+@RabbitListener(bindings = {
+        @QueueBinding(value = @Queue(value = "${controller.url}.ons.retry",
+                arguments = {
+                        @Argument(name = "x-dead-letter-exchange", value = "$service_name"),
+                        @Argument(name = "x-dead-letter-routing-key", value = "${controller.url}"),
+                        @Argument(name = "x-message-ttl", value = "${controller.ttl}", type = "java.lang.Integer")
+                }),
+                exchange = @Exchange(value = "${service_name}", type = "topic"),
+                key = "${controller.url}.ons.retry"
+        )
+}, autoStartup = "false")
+@RabbitListener(bindings = {
+        @QueueBinding(value = @Queue(value = "${controller.url}.ons.failed"),
+                exchange = @Exchange(value = "${service_name}", type = "topic"),
+                key = "${controller.url}.ons.failed"
+        )
+}, autoStartup = "false")
+public interface ONS${controller.name}ConsumerHandler {
+    public static final String TAGS_ALL="${controller_package}.ONS${controller.name}ConsumerHandler::*";
+#foreach($method in ${controller.methodDoms})
+    public static final String TAGS_${tool.toUpperCaseFirstOne($method.name)}="${controller_package}.ONS${controller.name}ConsumerHandler::${method.name}";
+    @RabbitHandler
+    void ${method.name}(ONS${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params mONS${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params, Channel channel, Message message) throws Exception;
 #end
+}
+        ]]>
+
+    </file>
+
+    <file name="${tool.getPath($controller_package)}ONS${controller.name}ProducerHandler.java">
+        <![CDATA[
+${environment.notes}
+package ${controller_package};
+import ${model_package}.*;
+import ${params_package}.*;
+import java.util.List;
+import org.springframework.amqp.core.AmqpTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
+@ConditionalOnProperty(prefix = "spring.rabbitmq",name = "host")
+@Component
+public class ONS${controller.name}ProducerHandler {
+    @Autowired
+    private AmqpTemplate amqpTemplate;
+#foreach($method in ${controller.methodDoms})
+    /**
+     * ${method.des}
+     */
+    public void ${method.name}(ONS${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params mONS${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params) {
+        amqpTemplate.convertAndSend("${controller.url}.ons", mONS${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params);
+    }
+#end
+}
+        ]]>
+    </file>
+#end
+
+#foreach($controller in $controllers)
+#foreach($method in ${controller.methodDoms})
+#if(${method.methodParameterDoms.size()}>0)
+    <file name="${tool.getPath($params_package)}ONS${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params.java">
+        <![CDATA[
+package ${params_package};
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Data;
+import lombok.Builder;
+import java.util.Date;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class ONS${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params {
+    @JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd")
+    @JSONField(format="yyyy-MM-dd")
+    private Date xONSDate;
+    private Long xONSDelay;
+    private ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params;
+}
+        ]]>
+    </file>
+#end
+#end
+#end
+
 </proto>
