@@ -5,6 +5,7 @@
 #set($baseParams = $protoDom.getBaseParamDoms())
 #set($controllers = $protoDom.getControllerDoms())
 #set($marcoFiles = $protoDom.getMarcoFileDoms())
+#set($type = $protoDom.getType())
 #set($controller_package = $environment.controller_package)
 #set($model_package = $environment.model_package)
 #set($marcos_package = $environment.marcos_package)
@@ -17,6 +18,7 @@
 ${environment.notes}
 package ${controller_package};
 import ${model_package}.*;
+import com.huiyi.base.annotation.*;
 import io.swagger.annotations.*;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +35,9 @@ public interface I${controller.name} {
     @ApiOperation(value = "${method.des}", httpMethod = "$tool.toUpper(${method.method})", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponse(code = 200, message = "success", response = ${tool.getTypeClass($method.rep)})
     @$tool.toUpperCaseFirstOneOtherLow(${method.method})Mapping("${method.url}")
-
+#if($type=="in")
+    @ServiceInside
+#end
 #if(${method.methodParameterDoms.size()} == 0)
 #if(${method.req}!="")
     $tool.typeChange(${method.rep}) ${method.name}(@RequestBody ${method.req} m${method.req}) throws Exception;
