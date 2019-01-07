@@ -24,6 +24,7 @@ public class ProtoDom {
     private String file_name;
     private String service;
     private String type;
+    private String outName;
 
     public ProtoDom() {
         javaTool = new JavaTool();
@@ -281,5 +282,13 @@ public class ProtoDom {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getOutName() {
+        return outName;
+    }
+
+    public void setOutName(String outName) {
+        this.outName = outName;
     }
 }
