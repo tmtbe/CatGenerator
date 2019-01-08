@@ -20,18 +20,14 @@ public class ReadProto {
     private ArrayList<File> files;
     private ArrayList<ProtoDom> protoDoms;
     private Map<String, ModelDom> modelDoms;
-    private Map<String, MarcoFileDom> marcoFileDomMap;
-    private Map<String, ControllerDom> controllerFileDomMap;
-    private ProtoDom totalProtoDom;
+    private Map<String,ProtoDom> outProtoDom;
     private VelocityEngine velocityEngine;
 
     public ReadProto() {
         files = new ArrayList<>();
         protoDoms = new ArrayList<>();
         modelDoms = new HashMap<>();
-        marcoFileDomMap = new HashMap<>();
-        controllerFileDomMap = new HashMap<>();
-        totalProtoDom = new ProtoDom();
+        outProtoDom = new HashMap<>();
     }
 
     /**
@@ -49,35 +45,56 @@ public class ReadProto {
             log.info(file.getAbsolutePath());
             getProto(file);
         }
-
-        //合并proto的model,marco,controller
+        //合并所有model
         for (ProtoDom protoDom : protoDoms) {
-            if(protoDom.getType()!=null&&protoDom.getType().equals("out")) {
-                for (ControllerDom controllerDom : protoDom.getControllerDoms()) {
-                    if (controllerFileDomMap.containsKey(controllerDom.getName())) {
-                        throw new Exception(controllerDom.getName() + "->Controller重复了");
-                    }
-                    controllerFileDomMap.put(controllerDom.getName(), controllerDom);
-                }
-            }
             for (ModelDom modelDom : protoDom.getModelDoms()) {
                 if (modelDoms.containsKey(modelDom.getName())) {
                     throw new Exception(modelDom.getName() + "->Model重复了");
                 }
                 modelDoms.put(modelDom.getName(), modelDom);
             }
-            for (MarcoFileDom marcoFileDom : protoDom.getMarcoFileDoms()) {
-                if (marcoFileDomMap.containsKey(marcoFileDom.getName())) {
-                    throw new Exception(marcoFileDom.getName() + "->MarcoFile重复了");
+        }
+        //获取所有Out类型
+        for (ProtoDom protoDom : protoDoms) {
+            if(protoDom.getType()!=null&&protoDom.getType().equals("out")) {
+                if(!outProtoDom.containsKey(protoDom.getOutName())){
+                    ProtoDom totalProtoDom = new ProtoDom();
+                    totalProtoDom.setOutName(protoDom.getOutName());
+                    totalProtoDom.setFile_name(protoDom.getOutName());
+                    outProtoDom.put(protoDom.getOutName(),totalProtoDom);
                 }
-                marcoFileDomMap.put(marcoFileDom.getName(), marcoFileDom);
             }
         }
-        totalProtoDom.setFile_name("全部");
-        totalProtoDom.setControllerDoms(new ArrayList(controllerFileDomMap.values()));
-        totalProtoDom.setMarcoFileDoms(new ArrayList(marcoFileDomMap.values()));
-        totalProtoDom.compatibleGenerics(modelDoms);
-        totalProtoDom.setBaseParamDoms(new ArrayList<>());
+        //遍历所有的out类型
+        for(String key:outProtoDom.keySet()){
+            Map<String, ControllerDom> controllerFileDomMap = new HashMap<>();
+            Map<String, MarcoFileDom> marcoFileDomMap = new HashMap<>();
+            ProtoDom totalProtoDom = outProtoDom.get(key);
+            //合并OutProto的marco,controller
+            for (ProtoDom protoDom : protoDoms) {
+                if(protoDom.getType()!=null&&protoDom.getType().equals("out")&&protoDom.getOutName().equals(key)) {
+                    for (ControllerDom controllerDom : protoDom.getControllerDoms()) {
+                        if (controllerFileDomMap.containsKey(controllerDom.getName())) {
+                            throw new Exception(controllerDom.getName() + "->Controller重复了");
+                        }
+                        controllerFileDomMap.put(controllerDom.getName(), controllerDom);
+                    }
+                }
+
+                for (MarcoFileDom marcoFileDom : protoDom.getMarcoFileDoms()) {
+                    if (marcoFileDomMap.containsKey(marcoFileDom.getName())) {
+                        throw new Exception(marcoFileDom.getName() + "->MarcoFile重复了");
+                    }
+                    marcoFileDomMap.put(marcoFileDom.getName(), marcoFileDom);
+                }
+            }
+            totalProtoDom.setControllerDoms(new ArrayList(controllerFileDomMap.values()));
+            totalProtoDom.setMarcoFileDoms(new ArrayList(marcoFileDomMap.values()));
+            totalProtoDom.compatibleGenerics(modelDoms);
+            totalProtoDom.setBaseParamDoms(new ArrayList<>());
+        }
+
+        //其余的操作
         for (ProtoDom protoDom : protoDoms) {
             protoDom.compatibleGenerics(modelDoms);
         }
@@ -148,7 +165,7 @@ public class ReadProto {
                 VelocityContext ctx = new VelocityContext();
                 ctx.put("environment", environment);
                 ctx.put("protoDom", protoDom);
-                ctx.put("totalProtoDom", totalProtoDom);
+                ctx.put("outProtoDomList", outProtoDom.values());
                 Class clazz = Class.forName(environment.getTool_class());
                 Object tool = clazz.newInstance();
                 ctx.put("tool", tool);
@@ -180,6 +197,7 @@ public class ReadProto {
         Element bookstore = document.getRootElement();
         protoDom.setService(bookstore.attributeValue("service"));
         protoDom.setType(bookstore.attributeValue("type"));
+        protoDom.setOutName(bookstore.attributeValue("outName"));
         Iterator storeit = bookstore.elementIterator();
         while (storeit.hasNext()) {
             Element element = (Element) storeit.next();

@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by 123 (456) -->
 #set($environment = $environment)
+#set($outProtoDomList = $outProtoDomList)
+
+<proto>
+#foreach($totalProtoDom in $outProtoDomList)
 #set($models = $totalProtoDom.getCompatibleGenericsModelDoms())
 #set($controllers = $totalProtoDom.getCompatibleGenericsControllerDoms())
 #set($marcoFiles = $totalProtoDom.getMarcoFileDoms())
 #set($baseParams = $totalProtoDom.getBaseParamDoms())
-<proto>
-    <file name="postman.json">
+
+    <file name="postman_${totalProtoDom.outName}.json">
 <![CDATA[
 $tool.createPostmanJson($controllers,$environment.baseUrl)
 ]]>
     </file>
+#end
 </proto>
