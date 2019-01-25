@@ -131,7 +131,7 @@ function sendAjax(ajax) {
       method: met,
       url: ajax.url,
       data: ajax.data(),
-      headers: {
+      header: {
         "Content-Type": "application/json; charset=utf-8;",
         "jwt": wx.getStorageSync('jwt')
       },
