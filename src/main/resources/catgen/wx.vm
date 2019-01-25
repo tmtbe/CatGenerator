@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 rel. 2 U (http://www.xmlspy.com) by 123 (456) -->
+#set($environment = $environment)
+#set($outProtoDomList = $outProtoDomList)
+
+<proto>
+#foreach($totalProtoDom in $outProtoDomList)
+#set($models = $totalProtoDom.getCompatibleGenericsModelDoms())
+#set($controllers = $totalProtoDom.getCompatibleGenericsControllerDoms())
+#set($marcoFiles = $totalProtoDom.getMarcoFileDoms())
+#set($baseParams = $totalProtoDom.getBaseParamDoms())
+    <file name="wx_${totalProtoDom.outName}.js">
+<![CDATA[
+let regeneratorRuntime = require("runtime");
+let baseUrl = "$environment.baseUrl";
+let build = new Build();
+function Build() {
+    /**
+     * @param json
+     * @returns {boolean}
+     */
+    this.buildBoolean=function (json) {
+        if(json==null) return false;
+        if(json=='1'||json=='true'||json==1||json==true) return true;
+        return false;
+    };
+    /**
+     * @param json
+     * @returns {Array.<boolean>}
+     */
+    this.buildBoolean_array=function (json) {
+        let result = [];
+        if(json==null) {
+            return result;
+        }
+        for (let k = 0, length = json.length; k < length; k++) {
+            result[k] = this.buildBoolean(json[k]);
+        }
+        return result;
+    };
+    /**
+     * @param json
+     * @returns {int}
+     */
+    this.buildNumber=function (json) {
+        if(json==null) return 0;
+        return parseInt(json)
+    };
+    /**
+     * @param json
+     * @returns {Array.<int>}
+     */
+    this.buildNumber_array=function (json) {
+        let result = [];
+        if(json==null) {
+            return result;
+        }
+        for (let k = 0, length = json.length; k < length; k++) {
+            result[k] = this.buildNumber(json[k]);
+        }
+        return result;
+    };
+    /**
+     * @param json
+     * @returns {string}
+     */
+    this.buildString=function(json) {
+        if(json==null) return "";
+        return String(json);
+    };
+    /**
+     * @param json
+     * @returns {Array.<string>}
+     */
+    this.buildString_array=function (json) {
+        let result = [];
+        if(json==null) {
+             return result;
+        }
+        for (let k = 0, length = json.length; k < length; k++) {
+            result[k] = this.buildString(json[k]);
+        }
+        return result;
+    };
+#foreach($model in $models)
+    /**
+     * @param json
+     * @returns {${model.name}}
+     */
+    this.build${model.name}=function (json) {
+        if(json==null) {
+            return new ${model.name}(null);
+        }
+        return new ${model.name}(json);
+    };
+    /**
+     * @param json
+     * @returns {Array.<${model.name}>}
+     */
+    this.build${model.name}_array=function (json) {
+        let result = [];
+        if(json==null) {
+            return result;
+        }
+        for (let k = 0, length = json.length; k < length; k++) {
+            result[k] = this.build${model.name}(json[k]);
+        }
+        return result;
+    };
+#end
+}
+#foreach($model in $models)
+/** ${model.des} **/
+function ${model.name}(json=false){
+#foreach($parameter in ${model.modelParameterDoms})
+    /**
+     * ${parameter.des}
+     * @type {${tool.desType($parameter.type)}}
+     */
+    this.${parameter.name} = build.build${tool.typeChange($parameter.type)}(json&&(json.${parameter.name}!=null)?json.${parameter.name}:null);
+#end
+}
+#end
+
+function sendAjax(ajax) {
+    return new Promise(function (resolve, reject) {
+    var met ='POST';
+    if (ajax.type === "GET") 
+      met = 'GET';
+    wx.request({
+      method: met,
+      url: ajax.url,
+      data: ajax.data(),
+      headers: {
+        "Content-Type": "application/json; charset=utf-8;",
+        "jwt": wx.getStorageSync('jwt')
+      },
+      success(res) {
+        resolve(res.data.retValue)
+      }
+    })
+  })
+}
+
+#foreach($controller in $controllers)
+#foreach($method in ${controller.methodDoms})
+/**
+* ${method.des}
+* @constructor
+*/
+function Rest${controller.name}${tool.toUpperCaseFirstOne($method.name)}() {
+#foreach($methodParameterDom in ${baseParams})
+    /**
+    * parameter $methodParameterDom.des
+    * @type {$tool.desType($methodParameterDom.type)}
+    * @required ${methodParameterDom.required}
+    */
+    this.p_${methodParameterDom.name} = null;
+#end
+#foreach($methodParameterDom in ${method.methodParameterDoms})
+    /**
+     * parameter $methodParameterDom.des
+     * @type {$tool.desType($methodParameterDom.type)}
+     * @required ${methodParameterDom.required}
+     */
+    this.p_${methodParameterDom.name} = null;
+#end
+    this.url = baseUrl+"/$controller.service/$controller.url/$method.url";
+    this.type = "${tool.toUpperCase($method.method)}";
+    this.data = function(){
+        return {
+#foreach($methodParameterDom in ${baseParams})
+            ${methodParameterDom.name}:this.p_${methodParameterDom.name},
+#end
+#foreach($methodParameterDom in ${method.methodParameterDoms})
+            ${methodParameterDom.name}:this.p_${methodParameterDom.name},
+#end
+        }
+    }
+    /**
+     * parameter result
+     * @type {$tool.desType($method.rep)}
+     */
+    this.result = null;
+    let self = this;
+    this.send = async function () {
+        try {
+            let data = await sendAjax(self);
+#if(${tool.isBaseType($method.rep)})
+            self.result = build.build${tool.typeChange($method.rep)}(data.data);
+#else
+            self.result = new ${tool.typeChange($method.rep)}(data.data);
+#end
+        }catch (e) {
+            console.error("[curl error]"+self.url);
+            console.error(e);
+#if(${tool.isBaseType($method.rep)})
+            self.result = build.build${tool.typeChange($method.rep)}(data.data);
+#else
+            self.result = new ${tool.typeChange($method.rep)}(false);
+#end
+            self.result.status = BaseMarco.CODE_INTER_FAIL;
+        }
+    }
+}
+
+#end
+#end
+
+#foreach($marcoFile in $marcoFiles)
+/**
+* ${marcoFile.des}
+*/
+let ${marcoFile.name} = {
+#set($count=$marcoFile.marcoDoms.size())
+#set($index=0)
+#foreach($marco in ${marcoFile.marcoDoms})
+#set($index=$index+1)
+    /**
+    * ${marco.des}
+    * @type {${tool.desType($marco.type)}}
+    */
+#if($index==$count)
+    $marco.name:${tool.getMarco($marco.type,$marco.value)}
+#else
+    $marco.name:${tool.getMarco($marco.type,$marco.value)},
+#end
+#end
+}
+export {${marcoFile.name}}
+#end
+
+module.exports = {
+//=====================marco=====================
+#foreach($marcoFile in $marcoFiles)
+    ${marcoFile.name},//  ${marcoFile.des}
+#end
+//===================controller=====================
+#foreach($controller in $controllers)
+#foreach($method in ${controller.methodDoms})
+    Rest${controller.name}${tool.toUpperCaseFirstOne($method.name)},//  [$controller.des]     $method.des
+#end
+#end
+}
+]]>
+    </file>
+#end
+</proto>
