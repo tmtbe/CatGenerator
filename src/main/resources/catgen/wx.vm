@@ -136,7 +136,7 @@ function sendAjax(ajax) {
         "jwt": wx.getStorageSync('jwt')
       },
       success(res) {
-        resolve(res.data.retValue)
+        resolve(res)
       }
     })
   })
