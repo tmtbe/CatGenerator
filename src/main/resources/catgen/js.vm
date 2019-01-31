@@ -11,9 +11,8 @@
 #set($baseParams = $totalProtoDom.getBaseParamDoms())
     <file name="${totalProtoDom.outName}.js">
 <![CDATA[
-import axios from 'axios'
+import axios from './axiosHttp'
 import storage from "assets/js/storage"
-let baseUrl = "$environment.baseUrl";
 let build = new Build();
 function Build() {
     /**
@@ -170,7 +169,7 @@ function Rest${controller.name}${tool.toUpperCaseFirstOne($method.name)}() {
      */
     this.p_${methodParameterDom.name} = null;
 #end
-    this.url = baseUrl+"/$controller.service/$controller.url/$method.url";
+    this.url = "/$controller.service/$controller.url/$method.url";
     this.type = "${tool.toUpperCase($method.method)}";
     this.data = function(){
         return {
