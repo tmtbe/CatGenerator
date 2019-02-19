@@ -127,13 +127,32 @@ function sendAjax(ajax) {
     var met ='POST';
     if (ajax.type === "GET") 
       met = 'GET';
+
+        var dd = ajax.data();
+        vafunction sendAjax(ajax) {
+  return new Promise(function (resolve, reject) {
+    var met = 'POST';
+    if (ajax.type === "GET")
+      met = 'GET';
+
+    var dd = ajax.data();
+    var keys = Object.keys(dd);
+    var newdata = {};
+    for (var key in keys) {
+      if (dd[keys[key]] == null) {
+      }
+      else {
+        newdata[keys[key]] = dd[keys[key]];
+      }
+    }
     wx.request({
       method: met,
       url: ajax.url,
-      data: ajax.data(),
+      data: newdata,
       header: {
-        "Content-Type": "application/json; charset=utf-8;",
-        "jwt": wx.getStorageSync('jwt')
+        'content-type': 'application/json',
+        'jwt': wx.getStorageSync('jwt'),
+
       },
       success(res) {
         resolve(res)
