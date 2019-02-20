@@ -123,13 +123,6 @@ function ${model.name}(json=false){
 #end
 
 function sendAjax(ajax) {
-    return new Promise(function (resolve, reject) {
-    var met ='POST';
-    if (ajax.type === "GET") 
-      met = 'GET';
-
-        var dd = ajax.data();
-        vafunction sendAjax(ajax) {
   return new Promise(function (resolve, reject) {
     var met = 'POST';
     if (ajax.type === "GET")
