@@ -11,9 +11,9 @@
 #set($baseParams = $totalProtoDom.getBaseParamDoms())
     <file name="wx_${totalProtoDom.outName}.js">
 <![CDATA[
-let regeneratorRuntime = require("runtime");
-let baseUrl = "$environment.baseUrl";
-let build = new Build();
+var regeneratorRuntime = require("runtime");
+var baseUrl = "$environment.baseUrl";
+var build = new Build();
 function Build() {
     /**
      * @param json
@@ -29,11 +29,11 @@ function Build() {
      * @returns {Array.<boolean>}
      */
     this.buildBoolean_array=function (json) {
-        let result = [];
+        var result = [];
         if(json==null) {
             return result;
         }
-        for (let k = 0, length = json.length; k < length; k++) {
+        for (var k = 0, length = json.length; k < length; k++) {
             result[k] = this.buildBoolean(json[k]);
         }
         return result;
@@ -51,11 +51,11 @@ function Build() {
      * @returns {Array.<int>}
      */
     this.buildNumber_array=function (json) {
-        let result = [];
+        var result = [];
         if(json==null) {
             return result;
         }
-        for (let k = 0, length = json.length; k < length; k++) {
+        for (var k = 0, length = json.length; k < length; k++) {
             result[k] = this.buildNumber(json[k]);
         }
         return result;
@@ -73,11 +73,11 @@ function Build() {
      * @returns {Array.<string>}
      */
     this.buildString_array=function (json) {
-        let result = [];
+        var result = [];
         if(json==null) {
              return result;
         }
-        for (let k = 0, length = json.length; k < length; k++) {
+        for (var k = 0, length = json.length; k < length; k++) {
             result[k] = this.buildString(json[k]);
         }
         return result;
@@ -98,11 +98,11 @@ function Build() {
      * @returns {Array.<${model.name}>}
      */
     this.build${model.name}_array=function (json) {
-        let result = [];
+        var result = [];
         if(json==null) {
             return result;
         }
-        for (let k = 0, length = json.length; k < length; k++) {
+        for (var k = 0, length = json.length; k < length; k++) {
             result[k] = this.build${model.name}(json[k]);
         }
         return result;
@@ -194,10 +194,10 @@ function Rest${controller.name}${tool.toUpperCaseFirstOne($method.name)}() {
      * @type {$tool.desType($method.rep)}
      */
     this.result = null;
-    let self = this;
+    var self = this;
     this.send = async function () {
         try {
-            let data = await sendAjax(self);
+            var data = await sendAjax(self);
 #if(${tool.isBaseType($method.rep)})
             self.result = build.build${tool.typeChange($method.rep)}(data.data);
 #else
@@ -223,7 +223,7 @@ function Rest${controller.name}${tool.toUpperCaseFirstOne($method.name)}() {
 /**
 * ${marcoFile.des}
 */
-let ${marcoFile.name} = {
+var ${marcoFile.name} = {
 #set($count=$marcoFile.marcoDoms.size())
 #set($index=0)
 #foreach($marco in ${marcoFile.marcoDoms})
@@ -239,18 +239,19 @@ let ${marcoFile.name} = {
 #end
 #end
 }
-export {${marcoFile.name}}
+
+exports.${marcoFile.name} = ${marcoFile.name};
 #end
 
 module.exports = {
 //=====================marco=====================
 #foreach($marcoFile in $marcoFiles)
-    ${marcoFile.name},//  ${marcoFile.des}
+    ${marcoFile.name}: ${marcoFile.name},//  ${marcoFile.des}
 #end
 //===================controller=====================
 #foreach($controller in $controllers)
 #foreach($method in ${controller.methodDoms})
-    Rest${controller.name}${tool.toUpperCaseFirstOne($method.name)},//  [$controller.des]     $method.des
+    Rest${controller.name}${tool.toUpperCaseFirstOne($method.name)}: Rest${controller.name}${tool.toUpperCaseFirstOne($method.name)},//  [$controller.des]     $method.des
 #end
 #end
 }
