@@ -13,6 +13,7 @@
 <![CDATA[
 import axios from './axiosHttp'
 import storage from "assets/js/storage"
+import qs from 'qs';
 let build = new Build();
 function Build() {
     /**
@@ -128,9 +129,9 @@ function sendAjax(ajax) {
             return axios({
                 url:ajax.url,
                 method:ajax.type,
-                data:ajax.data(),
+                data:qs.stringify(ajax.data()),
                 headers: {
-                    "Content-Type": "application/x-www-form-urlencoded; charset=utf-8;",
+                    "Content-Type": "application/form-data; charset=utf-8;",
                     "jwt": storage.getStorage("jwt")
                 }
             })
@@ -181,7 +182,11 @@ function Rest${controller.name}${tool.toUpperCaseFirstOne($method.name)}() {
      */
     this.p_${methodParameterDom.name} = null;
 #end
+#if(${totalProtoDom.useGate}=="false")
+    this.url = "/$controller.url/$method.url";
+#else
     this.url = "/$controller.service/$controller.url/$method.url";
+#end
     this.type = "${tool.toUpperCase($method.method)}";
     this.typeEx = "${tool.toUpperCase($method.methodEx)}";
     this.data = function(){

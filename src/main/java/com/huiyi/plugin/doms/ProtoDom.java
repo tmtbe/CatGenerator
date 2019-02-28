@@ -25,7 +25,7 @@ public class ProtoDom {
     private String service;
     private String type;
     private String outName;
-
+    private String useGate = "true";
     public ProtoDom() {
         javaTool = new JavaTool();
         baseParamDoms = new ArrayList<>();
@@ -290,5 +290,13 @@ public class ProtoDom {
 
     public void setOutName(String outName) {
         this.outName = outName;
+    }
+
+    public String getUseGate() {
+        return useGate;
+    }
+
+    public void setUseGate(String useGate) {
+        this.useGate = useGate;
     }
 }
