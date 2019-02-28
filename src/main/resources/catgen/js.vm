@@ -12,7 +12,9 @@
     <file name="${totalProtoDom.outName}.js">
 <![CDATA[
 import axios from './axiosHttp'
+#if(${totalProtoDom.useGate}!="false")
 import storage from "assets/js/storage"
+#end
 import qs from 'qs';
 let build = new Build();
 function Build() {
@@ -132,7 +134,9 @@ function sendAjax(ajax) {
                 data:qs.stringify(ajax.data()),
                 headers: {
                     "Content-Type": "application/form-data; charset=utf-8;",
+#if(${totalProtoDom.useGate}!="false")
                     "jwt": storage.getStorage("jwt")
+#end
                 }
             })
         }else{
@@ -142,7 +146,9 @@ function sendAjax(ajax) {
                 data:JSON.stringify(ajax.data()),
                 headers: {
                     "Content-Type": "application/json; charset=utf-8;",
+#if(${totalProtoDom.useGate}!="false")
                     "jwt": storage.getStorage("jwt")
+#end
                 }
             })
         }
