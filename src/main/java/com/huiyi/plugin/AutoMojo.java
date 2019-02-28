@@ -51,6 +51,7 @@ public class AutoMojo extends AbstractMojo {
         run( "oc");
         run( "js");
         run( "postman");
+        run( "wx");
         run( "rabbit");
     }
 

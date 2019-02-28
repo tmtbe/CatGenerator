@@ -9,14 +9,11 @@
 #set($controllers = $totalProtoDom.getCompatibleGenericsControllerDoms())
 #set($marcoFiles = $totalProtoDom.getMarcoFileDoms())
 #set($baseParams = $totalProtoDom.getBaseParamDoms())
-    <file name="${totalProtoDom.outName}.js">
+    <file name="wx_${totalProtoDom.outName}.js">
 <![CDATA[
-import axios from './axiosHttp'
-#if(${totalProtoDom.useGate}!="false")
-import storage from "assets/js/storage"
-#end
-import qs from 'qs';
-let build = new Build();
+var regeneratorRuntime = require("runtime");
+var baseUrl = "$environment.baseUrl";
+var build = new Build();
 function Build() {
     /**
      * @param json
@@ -32,11 +29,11 @@ function Build() {
      * @returns {Array.<boolean>}
      */
     this.buildBoolean_array=function (json) {
-        let result = [];
+        var result = [];
         if(json==null) {
             return result;
         }
-        for (let k = 0, length = json.length; k < length; k++) {
+        for (var k = 0, length = json.length; k < length; k++) {
             result[k] = this.buildBoolean(json[k]);
         }
         return result;
@@ -54,11 +51,11 @@ function Build() {
      * @returns {Array.<int>}
      */
     this.buildNumber_array=function (json) {
-        let result = [];
+        var result = [];
         if(json==null) {
             return result;
         }
-        for (let k = 0, length = json.length; k < length; k++) {
+        for (var k = 0, length = json.length; k < length; k++) {
             result[k] = this.buildNumber(json[k]);
         }
         return result;
@@ -76,11 +73,11 @@ function Build() {
      * @returns {Array.<string>}
      */
     this.buildString_array=function (json) {
-        let result = [];
+        var result = [];
         if(json==null) {
              return result;
         }
-        for (let k = 0, length = json.length; k < length; k++) {
+        for (var k = 0, length = json.length; k < length; k++) {
             result[k] = this.buildString(json[k]);
         }
         return result;
@@ -101,11 +98,11 @@ function Build() {
      * @returns {Array.<${model.name}>}
      */
     this.build${model.name}_array=function (json) {
-        let result = [];
+        var result = [];
         if(json==null) {
             return result;
         }
-        for (let k = 0, length = json.length; k < length; k++) {
+        for (var k = 0, length = json.length; k < length; k++) {
             result[k] = this.build${model.name}(json[k]);
         }
         return result;
@@ -126,43 +123,35 @@ function ${model.name}(json=false){
 #end
 
 function sendAjax(ajax) {
-    if(ajax.type==="POST"){
-        if(ajax.typeEx==="FORM"){
-            return axios({
-                url:ajax.url,
-                method:ajax.type,
-                data:qs.stringify(ajax.data()),
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded; charset=utf-8;",
-#if(${totalProtoDom.useGate}!="false")
-                    "jwt": storage.getStorage("jwt")
-#end
-                }
-            })
-        }else{
-            return axios({
-                url:ajax.url,
-                method:ajax.type,
-                data:JSON.stringify(ajax.data()),
-                headers: {
-                    "Content-Type": "application/json; charset=utf-8;",
-#if(${totalProtoDom.useGate}!="false")
-                    "jwt": storage.getStorage("jwt")
-#end
-                }
-            })
-        }
-    }else{
-        return axios({
-            url:ajax.url,
-            method:ajax.type,
-            params:ajax.data(),
-            headers: {
-                "Content-Type": "application/json; charset=utf-8;",
-                "jwt": storage.getStorage("jwt")
-            }
-        })
+  return new Promise(function (resolve, reject) {
+    var met = 'POST';
+    if (ajax.type === "GET")
+      met = 'GET';
+
+    var dd = ajax.data();
+    var keys = Object.keys(dd);
+    var newdata = {};
+    for (var key in keys) {
+      if (dd[keys[key]] == null) {
+      }
+      else {
+        newdata[keys[key]] = dd[keys[key]];
+      }
     }
+    wx.request({
+      method: met,
+      url: ajax.url,
+      data: newdata,
+      header: {
+        'content-type': 'application/json',
+        'jwt': wx.getStorageSync('jwt'),
+
+      },
+      success(res) {
+        resolve(res)
+      }
+    })
+  })
 }
 
 #foreach($controller in $controllers)
@@ -188,13 +177,8 @@ function Rest${controller.name}${tool.toUpperCaseFirstOne($method.name)}() {
      */
     this.p_${methodParameterDom.name} = null;
 #end
-#if(${totalProtoDom.useGate}=="false")
-    this.url = "/$controller.url/$method.url";
-#else
-    this.url = "/$controller.service/$controller.url/$method.url";
-#end
+    this.url = baseUrl+"/$controller.service/$controller.url/$method.url";
     this.type = "${tool.toUpperCase($method.method)}";
-    this.typeEx = "${tool.toUpperCase($method.methodEx)}";
     this.data = function(){
         return {
 #foreach($methodParameterDom in ${baseParams})
@@ -210,10 +194,10 @@ function Rest${controller.name}${tool.toUpperCaseFirstOne($method.name)}() {
      * @type {$tool.desType($method.rep)}
      */
     this.result = null;
-    let self = this;
+    var self = this;
     this.send = async function () {
         try {
-            let data = await sendAjax(self);
+            var data = await sendAjax(self);
 #if(${tool.isBaseType($method.rep)})
             self.result = build.build${tool.typeChange($method.rep)}(data.data);
 #else
@@ -239,7 +223,7 @@ function Rest${controller.name}${tool.toUpperCaseFirstOne($method.name)}() {
 /**
 * ${marcoFile.des}
 */
-let ${marcoFile.name} = {
+var ${marcoFile.name} = {
 #set($count=$marcoFile.marcoDoms.size())
 #set($index=0)
 #foreach($marco in ${marcoFile.marcoDoms})
@@ -255,15 +239,22 @@ let ${marcoFile.name} = {
 #end
 #end
 }
-export {${marcoFile.name}}
+
+exports.${marcoFile.name} = ${marcoFile.name};
 #end
 
+module.exports = {
+//=====================marco=====================
+#foreach($marcoFile in $marcoFiles)
+    ${marcoFile.name}: ${marcoFile.name},//  ${marcoFile.des}
+#end
+//===================controller=====================
 #foreach($controller in $controllers)
 #foreach($method in ${controller.methodDoms})
-//  [$controller.des]     $method.des
-export {Rest${controller.name}${tool.toUpperCaseFirstOne($method.name)}}
+    Rest${controller.name}${tool.toUpperCaseFirstOne($method.name)}: Rest${controller.name}${tool.toUpperCaseFirstOne($method.name)},//  [$controller.des]     $method.des
 #end
 #end
+}
 ]]>
     </file>
 #end

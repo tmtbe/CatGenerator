@@ -60,6 +60,7 @@ public class ReadProto {
                 if(!outProtoDom.containsKey(protoDom.getOutName())){
                     ProtoDom totalProtoDom = new ProtoDom();
                     totalProtoDom.setOutName(protoDom.getOutName());
+                    totalProtoDom.setUseGate(protoDom.getUseGate());
                     totalProtoDom.setFile_name(protoDom.getOutName());
                     outProtoDom.put(protoDom.getOutName(),totalProtoDom);
                 }
@@ -198,6 +199,7 @@ public class ReadProto {
         protoDom.setService(bookstore.attributeValue("service"));
         protoDom.setType(bookstore.attributeValue("type"));
         protoDom.setOutName(bookstore.attributeValue("outName"));
+        protoDom.setUseGate(bookstore.attributeValue("useGate"));
         Iterator storeit = bookstore.elementIterator();
         while (storeit.hasNext()) {
             Element element = (Element) storeit.next();
