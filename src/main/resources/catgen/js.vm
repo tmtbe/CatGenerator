@@ -133,7 +133,7 @@ function sendAjax(ajax) {
                 method:ajax.type,
                 data:qs.stringify(ajax.data()),
                 headers: {
-                    "Content-Type": "application/form-data; charset=utf-8;",
+                    "Content-Type": "application/x-www-form-urlencoded; charset=utf-8;",
 #if(${totalProtoDom.useGate}!="false")
                     "jwt": storage.getStorage("jwt")
 #end
