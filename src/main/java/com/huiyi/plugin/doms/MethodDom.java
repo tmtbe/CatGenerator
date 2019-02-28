@@ -14,6 +14,7 @@ public class MethodDom implements Cloneable {
     private String name;
     private String url;
     private String method;
+    private String methodEx = "";
     private String req = "";
     private String rep = "";
     private String des;
@@ -108,5 +109,13 @@ public class MethodDom implements Cloneable {
 
     public void setReq(String req) {
         this.req = req;
+    }
+
+    public String getMethodEx() {
+        return methodEx;
+    }
+
+    public void setMethodEx(String methodEx) {
+        this.methodEx = methodEx;
     }
 }
