@@ -17,26 +17,26 @@ var build = new Build();
 function Build() {
     /**
      * @param json
+     * @returns {Array}
+     */
+    this.buildArray=function (json,func) {
+        let result = [];
+        if(json==null) {
+            return result;
+        }
+        for (let k = 0, length = json.length; k < length; k++) {
+            result[k] = func(json[k]);
+        }
+        return result;
+    };
+    /**
+     * @param json
      * @returns {boolean}
      */
     this.buildBoolean=function (json) {
         if(json==null) return false;
         if(json=='1'||json=='true'||json==1||json==true) return true;
         return false;
-    };
-    /**
-     * @param json
-     * @returns {Array.<boolean>}
-     */
-    this.buildBoolean_array=function (json) {
-        var result = [];
-        if(json==null) {
-            return result;
-        }
-        for (var k = 0, length = json.length; k < length; k++) {
-            result[k] = this.buildBoolean(json[k]);
-        }
-        return result;
     };
     /**
      * @param json
@@ -48,39 +48,11 @@ function Build() {
     };
     /**
      * @param json
-     * @returns {Array.<int>}
-     */
-    this.buildNumber_array=function (json) {
-        var result = [];
-        if(json==null) {
-            return result;
-        }
-        for (var k = 0, length = json.length; k < length; k++) {
-            result[k] = this.buildNumber(json[k]);
-        }
-        return result;
-    };
-    /**
-     * @param json
      * @returns {string}
      */
     this.buildString=function(json) {
         if(json==null) return "";
         return String(json);
-    };
-    /**
-     * @param json
-     * @returns {Array.<string>}
-     */
-    this.buildString_array=function (json) {
-        var result = [];
-        if(json==null) {
-             return result;
-        }
-        for (var k = 0, length = json.length; k < length; k++) {
-            result[k] = this.buildString(json[k]);
-        }
-        return result;
     };
 #foreach($model in $models)
     /**
@@ -88,24 +60,7 @@ function Build() {
      * @returns {${model.name}}
      */
     this.build${model.name}=function (json) {
-        if(json==null) {
-            return new ${model.name}(null);
-        }
         return new ${model.name}(json);
-    };
-    /**
-     * @param json
-     * @returns {Array.<${model.name}>}
-     */
-    this.build${model.name}_array=function (json) {
-        var result = [];
-        if(json==null) {
-            return result;
-        }
-        for (var k = 0, length = json.length; k < length; k++) {
-            result[k] = this.build${model.name}(json[k]);
-        }
-        return result;
     };
 #end
 }
@@ -113,11 +68,19 @@ function Build() {
 /** ${model.des} **/
 function ${model.name}(json=false){
 #foreach($parameter in ${model.modelParameterDoms})
+#if(${tool.typeIsArray($parameter.type)})
+    /**
+     * ${parameter.des}
+     * @type {${tool.desType($parameter.type)}}
+     */
+    this.${parameter.name} = build.buildArray(json&&(json.${parameter.name}!=null)?json.${parameter.name}:null,build.build${tool.typeChangeNoArray($parameter.type)});
+#else
     /**
      * ${parameter.des}
      * @type {${tool.desType($parameter.type)}}
      */
     this.${parameter.name} = build.build${tool.typeChange($parameter.type)}(json&&(json.${parameter.name}!=null)?json.${parameter.name}:null);
+#end
 #end
 }
 #end
@@ -194,22 +157,22 @@ function Rest${controller.name}${tool.toUpperCaseFirstOne($method.name)}() {
      * @type {$tool.desType($method.rep)}
      */
     this.result = null;
-    var self = this;
+    let self = this;
     this.send = async function () {
         try {
-            var data = await sendAjax(self);
-#if(${tool.isBaseType($method.rep)})
-            self.result = build.build${tool.typeChange($method.rep)}(data.data);
+            let data = await sendAjax(self);
+#if(${tool.typeIsArray($method.rep)})
+            self.result = build.buildArray(data.data,${tool.typeChangeNoArray($method.rep)});
 #else
-            self.result = new ${tool.typeChange($method.rep)}(data.data);
+            self.result = build.build${tool.typeChange($method.rep)}(data.data);
 #end
         }catch (e) {
             console.error("[curl error]"+self.url);
             console.error(e);
-#if(${tool.isBaseType($method.rep)})
-            self.result = build.build${tool.typeChange($method.rep)}(data.data);
+#if(${tool.typeIsArray($method.rep)})
+            self.result = build.buildArray(null,${tool.typeChangeNoArray($method.rep)});
 #else
-            self.result = new ${tool.typeChange($method.rep)}(false);
+            self.result = build.build${tool.typeChange($method.rep)}(null);
 #end
             self.result.status = BaseMarco.CODE_INTER_FAIL;
         }
