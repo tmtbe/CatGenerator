@@ -201,7 +201,7 @@ import org.springframework.amqp.rabbit.annotation.Queue;
         @QueueBinding(value = @Queue(value = "${controller.url}.ons.retry",
                 arguments = {
                         @Argument(name = "x-dead-letter-exchange", value = "$service_name"),
-                        @Argument(name = "x-dead-letter-routing-key", value = "${controller.url}"),
+                        @Argument(name = "x-dead-letter-routing-key", value = "${controller.url}.ons"),
                         @Argument(name = "x-message-ttl", value = "${controller.ttl}", type = "java.lang.Integer")
                 }),
                 exchange = @Exchange(value = "${service_name}", type = "topic"),
