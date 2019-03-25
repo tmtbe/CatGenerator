@@ -201,7 +201,7 @@ import org.springframework.amqp.rabbit.annotation.Queue;
         @QueueBinding(value = @Queue(value = "${controller.url}.ons.retry",
                 arguments = {
                         @Argument(name = "x-dead-letter-exchange", value = "$service_name"),
-                        @Argument(name = "x-dead-letter-routing-key", value = "${controller.url}"),
+                        @Argument(name = "x-dead-letter-routing-key", value = "${controller.url}.ons"),
                         @Argument(name = "x-message-ttl", value = "${controller.ttl}", type = "java.lang.Integer")
                 }),
                 exchange = @Exchange(value = "${service_name}", type = "topic"),
@@ -275,8 +275,8 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 public class ONS${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params {
-    @JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd")
-    @JSONField(format="yyyy-MM-dd")
+    @JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd HH:mm:ss")
+    @JSONField(format="yyyy-MM-dd HH:mm:ss")
     private Date xONSDate;
     private Long xONSDelay;
     private ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params;

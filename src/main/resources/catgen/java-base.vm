@@ -21,6 +21,7 @@ import java.lang.reflect.Field;
 import lombok.*;
 import com.alibaba.fastjson.*;
 import java.io.*;
+import com.github.pagehelper.Page;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.alibaba.fastjson.annotation.JSONField;
 import org.springframework.beans.BeanUtils;
@@ -87,11 +88,22 @@ public class ${tool.baseType($model.name)} implements Serializable, Cloneable {
         return JSON.parseObject(str,${tool.baseType($model.name)}.class);
     }
     public static <T> ArrayList<${tool.baseType($model.name)}> formList(List<T> list){
-        ArrayList<${tool.baseType($model.name)}> result = new ArrayList<>();
+        ArrayList<${tool.baseType($model.name)}> result;
+        if (list instanceof Page) {
+            result = new Page<>();
+        } else {
+            result = new ArrayList<>();
+        }
         for (T one:list) {
             ${tool.baseType($model.name)} m${tool.baseType($model.name)} = new ${tool.baseType($model.name)}();
             m${tool.baseType($model.name)}.copyFrom(one);
             result.add(m${tool.baseType($model.name)});
+        }
+        if (list instanceof Page) {
+            ((Page<T>) result).setPageNum(((Page<T>) list).getPageNum());
+            ((Page<T>) result).setPageSize(((Page<T>) list).getPageSize());
+            ((Page<T>) result).setPages(((Page<T>) list).getPages());
+            ((Page<T>) result).setStartRow(((Page<T>) list).getStartRow());
         }
         return result;
     }

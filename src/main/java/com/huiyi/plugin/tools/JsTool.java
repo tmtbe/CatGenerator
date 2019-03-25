@@ -69,7 +69,23 @@ public class JsTool extends BaseTools {
             return result;
         }
     }
-
+    //类型转换
+    public String typeChangeNoArray(String s) {
+        if(s==null||s.isEmpty()) return "";
+        int arrIndex = s.indexOf("[]");
+        boolean isArray = false;
+        String result = "";
+        if (arrIndex > 0) {
+            isArray = true;
+            s = s.substring(0, arrIndex);
+        }
+        if (baseType.containsKey(s)) {
+            result = baseType.get(s);
+        } else {
+            result = toUpperCaseFirstOne(s);
+        }
+        return result;
+    }
     //基础类型
     public String baseType(String s) {
         int arrIndex = s.indexOf("[]");
