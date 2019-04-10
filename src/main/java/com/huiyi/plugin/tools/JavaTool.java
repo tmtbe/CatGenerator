@@ -24,12 +24,12 @@ public class JavaTool extends BaseTools {
         baseType.put("datetime", "Date");
 
         casebaseType = new HashMap<>();
-        casebaseType.put("int", "int");
+        casebaseType.put("int", "Integer");
         casebaseType.put("string", "String");
-        casebaseType.put("bool", "boolean");
-        casebaseType.put("long", "long");
-        casebaseType.put("float", "float");
-        casebaseType.put("double", "double");
+        casebaseType.put("bool", "Boolean");
+        casebaseType.put("long", "Long");
+        casebaseType.put("float", "Float");
+        casebaseType.put("double", "Double");
         casebaseType.put("date", "Date");
         casebaseType.put("datetime", "Date");
     }
