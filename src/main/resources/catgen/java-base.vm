@@ -253,7 +253,7 @@ public enum ${marcoFile.name} {
 #if($count<$max)
     ${marco.name}(${tool.getMarco($marco.type,$marco.value)},"$marco.des"),
 #else
-    #set($type = $tool.baseCaseType(${marco.type}))
+    #set($type = $tool.baseType(${marco.type}))
     ${marco.name}(${tool.getMarco($marco.type,$marco.value)},"$marco.des");
 #end
     #set($count=$count+1)
