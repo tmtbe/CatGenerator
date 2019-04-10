@@ -11,6 +11,7 @@ import java.util.List;
 
 public class MarcoFileDom {
     private String name;
+    private String isEnum;
     private String des;
     private ArrayList<MarcoDom>  marcoDoms;
 
@@ -53,5 +54,13 @@ public class MarcoFileDom {
 
     public void setDes(String des) {
         this.des = des;
+    }
+
+    public String getIsEnum() {
+        return isEnum;
+    }
+
+    public void setIsEnum(String isEnum) {
+        this.isEnum = isEnum;
     }
 }

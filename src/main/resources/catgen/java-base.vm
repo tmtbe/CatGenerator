@@ -241,6 +241,57 @@ public class ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params e
 
 
 #foreach($marcoFile in $marcoFiles)
+#if(${marcoFile.isEnum}=="true")
+    <file name="${tool.getPath($marcos_package)}${marcoFile.name}.java">
+        <![CDATA[
+${environment.notes}
+package ${marcos_package};
+public enum ${marcoFile.name} {
+#set($max=${marcoFile.marcoDoms.size()})
+#set($count=1)
+#foreach($marco in ${marcoFile.marcoDoms})
+#if($count<$max)
+    ${marco.name}(${tool.getMarco($marco.type,$marco.value)},"$marco.des"),
+#else
+    #set($type = $tool.baseCaseType(${marco.type}))
+    ${marco.name}(${tool.getMarco($marco.type,$marco.value)},"$marco.des");
+#end
+    #set($count=$count+1)
+#end
+    private $type value;
+    private String desc;
+    ${marcoFile.name}($type value, String desc) {
+        this.desc = desc;
+        this.value = value;
+    }
+    public $type getValue() {
+        return value;
+    }
+
+    public void setValue($type value) {
+        this.value = value;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
+    public static ${marcoFile.name} descOf($type value) {
+        for (${marcoFile.name} one : ${marcoFile.name}.values()) {
+            if (one.getValue().equals(value)) {
+                return one;
+            }
+        }
+        return null;
+    }
+}
+        ]]>
+    </file>
+#else
     <file name="${tool.getPath($marcos_package)}${marcoFile.name}.java">
         <![CDATA[
 ${environment.notes}
@@ -248,12 +299,13 @@ package ${marcos_package};
 public class ${marcoFile.name} {
 #foreach($marco in ${marcoFile.marcoDoms})
     /**
-     * ${marco.des};
-     */
+    * ${marco.des};
+    */
     public static final $tool.baseCaseType(${marco.type}) ${marco.name} = ${tool.getMarco($marco.type,$marco.value)};
 #end
 }
         ]]>
     </file>
+#end
 #end
 </proto>
