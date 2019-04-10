@@ -8,8 +8,11 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
+import sun.misc.BASE64Encoder;
 
 import java.io.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,7 +23,7 @@ public class ReadProto {
     private ArrayList<File> files;
     private ArrayList<ProtoDom> protoDoms;
     private Map<String, ModelDom> modelDoms;
-    private Map<String,ProtoDom> outProtoDom;
+    private Map<String, ProtoDom> outProtoDom;
     private VelocityEngine velocityEngine;
 
     public ReadProto() {
@@ -56,24 +59,24 @@ public class ReadProto {
         }
         //获取所有Out类型
         for (ProtoDom protoDom : protoDoms) {
-            if(protoDom.getType()!=null&&protoDom.getType().equals("out")) {
-                if(!outProtoDom.containsKey(protoDom.getOutName())){
+            if (protoDom.getType() != null && protoDom.getType().equals("out")) {
+                if (!outProtoDom.containsKey(protoDom.getOutName())) {
                     ProtoDom totalProtoDom = new ProtoDom();
                     totalProtoDom.setOutName(protoDom.getOutName());
                     totalProtoDom.setUseGate(protoDom.getUseGate());
                     totalProtoDom.setFile_name(protoDom.getOutName());
-                    outProtoDom.put(protoDom.getOutName(),totalProtoDom);
+                    outProtoDom.put(protoDom.getOutName(), totalProtoDom);
                 }
             }
         }
         //遍历所有的out类型
-        for(String key:outProtoDom.keySet()){
+        for (String key : outProtoDom.keySet()) {
             Map<String, ControllerDom> controllerFileDomMap = new HashMap<>();
             Map<String, MarcoFileDom> marcoFileDomMap = new HashMap<>();
             ProtoDom totalProtoDom = outProtoDom.get(key);
             //合并OutProto的marco,controller
             for (ProtoDom protoDom : protoDoms) {
-                if(protoDom.getType()!=null&&protoDom.getType().equals("out")&&protoDom.getOutName().equals(key)) {
+                if (protoDom.getType() != null && protoDom.getType().equals("out") && protoDom.getOutName().equals(key)) {
                     for (ControllerDom controllerDom : protoDom.getControllerDoms()) {
                         if (controllerFileDomMap.containsKey(controllerDom.getName())) {
                             throw new Exception(controllerDom.getName() + "->Controller重复了");
@@ -110,7 +113,7 @@ public class ReadProto {
      */
     public void run(Log log, String environmentName) throws Exception {
         for (ProtoDom protoDom : protoDoms) {
-            if(protoDom.getType()!=null) {
+            if (protoDom.getType() != null) {
                 EnvironmentDom java_environmentDom = new EnvironmentDom();
                 java_environmentDom.setLanguage("java");
                 java_environmentDom.setRoot_path("local");
@@ -246,6 +249,9 @@ public class ReadProto {
                 if (!file.exists()) {
                     file.mkdirs();
                 }
+                if(contrast(log,fileName, element.getText().trim())){
+                    continue;
+                }
                 FileWriter writer;
                 if (element.attributeValue("append") != null && element.attributeValue("append").equals("true")) {
                     writer = new FileWriter(fileName, true);
@@ -261,4 +267,32 @@ public class ReadProto {
 
     }
 
+    public Boolean contrast(Log log, String fileName, String content) {
+        String encoding = "UTF-8";
+        File file = new File(fileName);
+        Long filelength = file.length();
+        byte[] filecontent = new byte[filelength.intValue()];
+        try {
+            FileInputStream in = new FileInputStream(file);
+            in.read(filecontent);
+            in.close();
+        } catch (Exception e){
+            return false;
+        }
+        try {
+            String one = new String(filecontent, encoding);
+            String oneMd5 = EncoderByMd5(one);
+            String targetMd5 = EncoderByMd5(content);
+            return oneMd5.equals(targetMd5);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public String EncoderByMd5(String str) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+        MessageDigest md5 = MessageDigest.getInstance("MD5");
+        BASE64Encoder base64en = new BASE64Encoder();
+        String newstr = base64en.encode(md5.digest(str.getBytes("utf-8")));
+        return newstr;
+    }
 }
