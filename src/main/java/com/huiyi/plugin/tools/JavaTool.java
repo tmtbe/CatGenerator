@@ -119,7 +119,7 @@ public class JavaTool extends BaseTools {
         if (casebaseType.containsKey(s)) {
             return casebaseType.get(s);
         } else{
-            throw new Exception("case的类型不对");
+            throw new Exception(s+"->case的类型不对");
         }
     }
 
