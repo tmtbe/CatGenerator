@@ -47,7 +47,7 @@ function Build() {
      */
     this.buildNumber=function (json) {
         if(json==null) return 0;
-        return parseInt(json)
+        return json
     };
     /**
      * @param json
