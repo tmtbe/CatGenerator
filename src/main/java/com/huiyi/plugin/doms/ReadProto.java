@@ -8,16 +8,13 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
-import sun.misc.BASE64Encoder;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 public class ReadProto {
     private ArrayList<File> files;
@@ -289,10 +286,8 @@ public class ReadProto {
         }
     }
 
-    public String EncoderByMd5(String str) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    private String EncoderByMd5(String str) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         MessageDigest md5 = MessageDigest.getInstance("MD5");
-        BASE64Encoder base64en = new BASE64Encoder();
-        String newstr = base64en.encode(md5.digest(str.getBytes("utf-8")));
-        return newstr;
+        return Base64.getEncoder().encodeToString(md5.digest(str.getBytes(StandardCharsets.UTF_8)));
     }
 }
