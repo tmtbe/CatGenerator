@@ -21,12 +21,11 @@ import java.lang.reflect.Field;
 import lombok.*;
 import com.alibaba.fastjson.*;
 import java.io.*;
-import com.github.pagehelper.Page;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.alibaba.fastjson.annotation.JSONField;
 import org.springframework.beans.BeanUtils;
-import com.huiyi.base.annotation.SensitiveInfo;
-import com.huiyi.base.utils.SensitiveInfoUtils;
+import com.thoughtworks.base.annotation.SensitiveInfo;
+import com.thoughtworks.base.utils.SensitiveInfoUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @Data
@@ -89,21 +88,11 @@ public class ${tool.baseType($model.name)} implements Serializable, Cloneable {
     }
     public static <T> ArrayList<${tool.baseType($model.name)}> formList(List<T> list){
         ArrayList<${tool.baseType($model.name)}> result;
-        if (list instanceof Page) {
-            result = new Page<>();
-        } else {
-            result = new ArrayList<>();
-        }
+        result = new ArrayList<>();
         for (T one:list) {
             ${tool.baseType($model.name)} m${tool.baseType($model.name)} = new ${tool.baseType($model.name)}();
             m${tool.baseType($model.name)}.copyFrom(one);
             result.add(m${tool.baseType($model.name)});
-        }
-        if (list instanceof Page) {
-            ((Page<T>) result).setPageNum(((Page<T>) list).getPageNum());
-            ((Page<T>) result).setPageSize(((Page<T>) list).getPageSize());
-            ((Page<T>) result).setPages(((Page<T>) list).getPages());
-            ((Page<T>) result).setStartRow(((Page<T>) list).getStartRow());
         }
         return result;
     }
@@ -131,13 +120,13 @@ public class ${tool.baseType($model.name)} implements Serializable, Cloneable {
 <file name="${tool.getPath($params_package)}base/BaseParams.java">
     <![CDATA[
 package ${params_package}.base;
-import com.huiyi.base.IBaseParam;
+import com.thoughtworks.base.IBaseParam;
 import io.swagger.annotations.*;
 import lombok.*;
 import java.io.*;
-import com.huiyi.base.annotation.SensitiveInfo;
-import com.huiyi.base.utils.SensitiveInfoUtils;
-import com.huiyi.base.HuiyiException;
+import com.thoughtworks.base.annotation.SensitiveInfo;
+import com.thoughtworks.base.utils.SensitiveInfoUtils;
+import com.thoughtworks.base.TWException;
 
 @Data
 @ApiModel
@@ -153,10 +142,10 @@ public class BaseParams implements Serializable, Cloneable, IBaseParam {
 #end
     private $tool.typeChange(${methodParameterDom.type}) ${methodParameterDom.name};
 #end
-    public void checkRequired() throws HuiyiException {
+    public void checkRequired() throws TWException {
 #foreach($methodParameterDom in ${method.methodParameterDoms})
 #if($methodParameterDom.required=="true")
-        if (${methodParameterDom.name} == null) throw new HuiyiException("缺少参数${methodParameterDom.name}");
+        if (${methodParameterDom.name} == null) throw new TWException("缺少参数${methodParameterDom.name}");
 #end
 #end
     }
@@ -182,14 +171,14 @@ package ${params_package};
 import ${params_package}.base.BaseParams;
 import io.swagger.annotations.*;
 import lombok.*;
-import com.huiyi.autogen.model.*;
+import $model_package.*;
 import java.util.*;
 import java.io.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.huiyi.base.annotation.SensitiveInfo;
-import com.huiyi.base.utils.SensitiveInfoUtils;
-import com.huiyi.base.HuiyiException;
+import com.thoughtworks.base.annotation.SensitiveInfo;
+import com.thoughtworks.base.utils.SensitiveInfoUtils;
+import com.thoughtworks.base.TWException;
 
 @Data
 @AllArgsConstructor
@@ -217,11 +206,11 @@ public class ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params e
 
 #end
 
-    public void checkRequired() throws HuiyiException {
+    public void checkRequired() throws TWException {
         super.checkRequired();
 #foreach($methodParameterDom in ${method.methodParameterDoms})
 #if($methodParameterDom.required=="true")
-        if (${methodParameterDom.name} == null) throw new HuiyiException("miss params: ${methodParameterDom.name}");
+        if (${methodParameterDom.name} == null) throw new TWException("miss params: ${methodParameterDom.name}");
 #end
 #end
     }

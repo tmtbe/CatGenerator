@@ -1,6 +1,6 @@
-package com.huiyi.plugin.doms;
+package com.thoughtworks.plugin.doms;
 
-import com.huiyi.plugin.tools.BaseTools;
+import com.thoughtworks.plugin.tools.BaseTools;
 import org.dom4j.Attribute;
 import org.dom4j.Element;
 

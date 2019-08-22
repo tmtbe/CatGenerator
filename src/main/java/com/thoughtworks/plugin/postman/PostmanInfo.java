@@ -1,4 +1,4 @@
-package com.huiyi.plugin.postman;
+package com.thoughtworks.plugin.postman;
 
 /**
  * catgen-maven-plugin

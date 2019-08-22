@@ -1,6 +1,6 @@
-package com.huiyi.plugin.doms;
+package com.thoughtworks.plugin.doms;
 
-import com.huiyi.plugin.Global;
+import com.thoughtworks.plugin.Global;
 import org.dom4j.Attribute;
 import org.dom4j.Element;
 
@@ -14,6 +14,7 @@ public class EnvironmentDom {
     private String notes;
     private String tool_class;
     private String baseUrl;
+    private String base_package;
     private String controller_package;
     private String model_package;
     private String marcos_package;
@@ -109,5 +110,12 @@ public class EnvironmentDom {
 
     public void setService_name(String service_name) {
         this.service_name = service_name;
+    }
+    public String getBase_package() {
+        return base_package;
+    }
+
+    public void setBase_package(String base_package) {
+        this.base_package = base_package;
     }
 }

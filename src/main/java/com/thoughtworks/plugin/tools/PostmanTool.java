@@ -1,20 +1,20 @@
-package com.huiyi.plugin.tools;
+package com.thoughtworks.plugin.tools;
 
 import com.alibaba.fastjson.JSON;
-import com.huiyi.plugin.doms.ControllerDom;
-import com.huiyi.plugin.doms.MethodDom;
-import com.huiyi.plugin.doms.MethodParameterDom;
-import com.huiyi.plugin.postman.*;
+import com.thoughtworks.plugin.doms.ControllerDom;
+import com.thoughtworks.plugin.doms.MethodDom;
+import com.thoughtworks.plugin.doms.MethodParameterDom;
+import com.thoughtworks.plugin.postman.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PostmanTool extends BaseTools {
-    public String createPostmanJson(List<ControllerDom> controllerDoms, String baseUrl) {
+    public String createPostmanJson(String useGate,List<ControllerDom> controllerDoms, String baseUrl) {
         PostmanData postmanData = new PostmanData();
         postmanData.setInfo(new PostmanInfo());
-        postmanData.getInfo().setDescription("荟医前端请求");
-        postmanData.getInfo().setName("荟医信息 RESTful APIs");
+        postmanData.getInfo().setDescription("前端请求");
+        postmanData.getInfo().setName("RESTful APIs");
         postmanData.getInfo().setSchema("https://schema.getpostman.com/json/collection/v2.1.0/collection.json");
         List<PostmanItem> postmanItems = new ArrayList<>();
         postmanData.setItem(postmanItems);
@@ -56,7 +56,9 @@ public class PostmanTool extends BaseTools {
                 url.setHost(host);
 
                 List<String> path = new ArrayList<>();
-                path.add(controllerDom.getService());
+                if(useGate.equals("true")) {
+                    path.add(controllerDom.getService());
+                }
                 path.add(controllerDom.getUrl());
                 path.add(methodDom.getUrl());
                 url.setPath(path);

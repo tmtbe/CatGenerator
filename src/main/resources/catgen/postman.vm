@@ -12,7 +12,7 @@
 
     <file name="postman_${totalProtoDom.outName}.json">
 <![CDATA[
-$tool.createPostmanJson($controllers,$environment.baseUrl)
+$tool.createPostmanJson(${totalProtoDom.useGate},$controllers,$environment.baseUrl)
 ]]>
     </file>
 #end

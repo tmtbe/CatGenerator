@@ -1,4 +1,4 @@
-package com.huiyi.plugin.doms;
+package com.thoughtworks.plugin.doms;
 
 public class Help {
     //首字母转大写

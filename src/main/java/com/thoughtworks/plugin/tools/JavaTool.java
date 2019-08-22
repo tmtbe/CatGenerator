@@ -1,6 +1,6 @@
-package com.huiyi.plugin.tools;
+package com.thoughtworks.plugin.tools;
 
-import com.huiyi.plugin.doms.MethodParameterDom;
+import com.thoughtworks.plugin.doms.MethodParameterDom;
 import org.apache.commons.lang.StringUtils;
 
 import java.text.MessageFormat;

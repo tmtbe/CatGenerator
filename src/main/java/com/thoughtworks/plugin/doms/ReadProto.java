@@ -1,4 +1,4 @@
-package com.huiyi.plugin.doms;
+package com.thoughtworks.plugin.doms;
 
 import org.apache.maven.plugin.logging.Log;
 import org.apache.velocity.Template;
@@ -111,14 +111,21 @@ public class ReadProto {
     public void run(Log log, String environmentName) throws Exception {
         for (ProtoDom protoDom : protoDoms) {
             if (protoDom.getType() != null) {
-                EnvironmentDom java_environmentDom = new EnvironmentDom();
+                EnvironmentDom java_environmentDom = protoDom.getEnvironmentDoms().get("java");
+                if (java_environmentDom == null) {
+                    java_environmentDom = new EnvironmentDom();
+                }
+                String basePackage = java_environmentDom.getBase_package();
+                String modelPackage = java_environmentDom.getModel_package();
+                if(basePackage==null) basePackage = "com.thoughtworks";
+                if(modelPackage==null) modelPackage = MessageFormat.format("{0}.autogen.model",basePackage);
                 java_environmentDom.setLanguage("java");
                 java_environmentDom.setRoot_path("local");
-                java_environmentDom.setTool_class("com.huiyi.plugin.tools.JavaTool");
-                java_environmentDom.setController_package(MessageFormat.format("com.huiyi.autogen.server.{0}", protoDom.getService()));
-                java_environmentDom.setParams_package(MessageFormat.format("com.huiyi.autogen.server.{0}.params", protoDom.getService()));
-                java_environmentDom.setMarcos_package(MessageFormat.format("com.huiyi.autogen.marcos.{0}", protoDom.getService()));
-                java_environmentDom.setModel_package("com.huiyi.autogen.model");
+                java_environmentDom.setTool_class("com.thoughtworks.plugin.tools.JavaTool");
+                java_environmentDom.setController_package(MessageFormat.format("{0}.{1}.autogen.server",basePackage, protoDom.getService()));
+                java_environmentDom.setParams_package(MessageFormat.format("{0}.{1}.autogen.server.params", basePackage,protoDom.getService()));
+                java_environmentDom.setMarcos_package(MessageFormat.format("{0}.{1}.autogen.marcos", basePackage,protoDom.getService()));
+                java_environmentDom.setModel_package(modelPackage);
                 java_environmentDom.setService_name(protoDom.getService());
                 java_environmentDom.setNotes("//代码生成工具生成，请勿直接修改");
                 if (protoDom.getType().equals("out")) {
@@ -129,11 +136,11 @@ public class ReadProto {
                     EnvironmentDom environmentDom = new EnvironmentDom();
                     environmentDom.setLanguage("fegin");
                     environmentDom.setRoot_path("local");
-                    environmentDom.setTool_class("com.huiyi.plugin.tools.JavaTool");
-                    environmentDom.setController_package(MessageFormat.format("com.huiyi.autogen.fegin.{0}", protoDom.getService()));
-                    environmentDom.setParams_package(MessageFormat.format("com.huiyi.autogen.server.{0}.params", protoDom.getService()));
-                    environmentDom.setMarcos_package(MessageFormat.format("com.huiyi.autogen.marcos.{0}", protoDom.getService()));
-                    environmentDom.setModel_package("com.huiyi.autogen.model");
+                    environmentDom.setTool_class("com.thoughtworks.plugin.tools.JavaTool");
+                    environmentDom.setController_package(MessageFormat.format("{0}.{1}.autogen.fegin",basePackage, protoDom.getService()));
+                    environmentDom.setParams_package(MessageFormat.format("{0}.{1}.autogen.server.params",basePackage, protoDom.getService()));
+                    environmentDom.setMarcos_package(MessageFormat.format("{0}.{1}.autogen.marcos",basePackage, protoDom.getService()));
+                    environmentDom.setModel_package(MessageFormat.format("{0}.autogen.model",basePackage));
                     environmentDom.setService_name(protoDom.getService());
                     environmentDom.setNotes("//代码生成工具生成，请勿直接修改");
                     HashMap<String, EnvironmentDom> environmentDomsMap = new HashMap<>();
@@ -144,11 +151,11 @@ public class ReadProto {
                     EnvironmentDom environmentDom = new EnvironmentDom();
                     environmentDom.setLanguage("rabbit");
                     environmentDom.setRoot_path("local");
-                    environmentDom.setTool_class("com.huiyi.plugin.tools.JavaTool");
-                    environmentDom.setController_package(MessageFormat.format("com.huiyi.autogen.rabbit.{0}", protoDom.getService()));
-                    environmentDom.setParams_package(MessageFormat.format("com.huiyi.autogen.rabbit.{0}.params", protoDom.getService()));
-                    environmentDom.setMarcos_package(MessageFormat.format("com.huiyi.autogen.marcos.{0}", protoDom.getService()));
-                    environmentDom.setModel_package("com.huiyi.autogen.model");
+                    environmentDom.setTool_class("com.thoughtworks.plugin.tools.JavaTool");
+                    environmentDom.setController_package(MessageFormat.format("{0}.{1}.autogen.rabbit",basePackage, protoDom.getService()));
+                    environmentDom.setParams_package(MessageFormat.format("{0}.{1}.autogen.rabbit.params", basePackage,protoDom.getService()));
+                    environmentDom.setMarcos_package(MessageFormat.format("{0}.{1}.autogen.marcos", basePackage,protoDom.getService()));
+                    environmentDom.setModel_package(MessageFormat.format("{0}.autogen.model",basePackage));
                     environmentDom.setService_name(protoDom.getService());
                     environmentDom.setNotes("//代码生成工具生成，请勿直接修改");
                     HashMap<String, EnvironmentDom> environmentDomsMap = new HashMap<>();
@@ -204,7 +211,7 @@ public class ReadProto {
         while (storeit.hasNext()) {
             Element element = (Element) storeit.next();
             switch (element.getName()) {
-                case "environments":
+                case "environment":
                     protoDom.setEnvironmentDoms(element);
                     break;
                 case "controller":
@@ -246,7 +253,7 @@ public class ReadProto {
                 if (!file.exists()) {
                     file.mkdirs();
                 }
-                if(contrast(log,fileName, element.getText().trim())){
+                if (contrast(log, fileName, element.getText().trim())) {
                     continue;
                 }
                 FileWriter writer;
@@ -273,7 +280,7 @@ public class ReadProto {
             FileInputStream in = new FileInputStream(file);
             in.read(filecontent);
             in.close();
-        } catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
         try {

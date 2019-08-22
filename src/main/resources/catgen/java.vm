@@ -13,40 +13,28 @@
 
 <proto>
 #foreach($controller in $controllers)
-    <file name="${tool.getPath($controller_package)}I${controller.name}.java">
+    <file name="${tool.getPath($controller_package)}${controller.name}Interface.java">
 <![CDATA[
 ${environment.notes}
 package ${controller_package};
 import ${model_package}.*;
-import com.huiyi.base.annotation.*;
-import io.swagger.annotations.*;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
 import ${params_package}.*;
 import java.util.*;
 
-@Api(tags="${controller.des}")
-@RequestMapping("${controller.url}")
-public interface I${controller.name} {
+public interface ${controller.name}Interface {
 #foreach($method in ${controller.methodDoms})
     /**
     * ${method.des}
     */
-    @ApiOperation(value = "${method.des}", httpMethod = "$tool.toUpper(${method.method})", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiResponse(code = 200, message = "success", response = ${tool.getTypeClass($method.rep)})
-    @$tool.toUpperCaseFirstOneOtherLow(${method.method})Mapping("${method.url}")
-#if($type=="in")
-    @ServiceInside
-#end
 #if(${method.methodParameterDoms.size()} == 0)
 #if(${method.req}!="")
-    $tool.typeChange(${method.rep}) ${method.name}(@RequestBody ${method.req} m${method.req}) throws Exception;
+    $tool.typeChange(${method.rep}) ${method.name}(${method.req} m${method.req}) throws Exception;
 #else
-    $tool.typeChange(${method.rep}) ${method.name}() throws Exception ;
+    $tool.typeChange(${method.rep}) ${method.name}() throws Exception;
 #end
 #else
 #if($tool.toUpperCase(${method.method}) == "POST")
-    $tool.typeChange(${method.rep}) ${method.name}(@RequestBody ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params) throws Exception;
+    $tool.typeChange(${method.rep}) ${method.name}(${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params) throws Exception;
 #else
     $tool.typeChange(${method.rep}) ${method.name}(${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params) throws Exception;
 #end
@@ -55,5 +43,61 @@ public interface I${controller.name} {
 }
 ]]>
     </file>
+    <file name="${tool.getPath($controller_package)}${controller.name}Template.java">
+<![CDATA[
+${environment.notes}
+package ${controller_package};
+import ${model_package}.*;
+import io.swagger.annotations.*;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+import ${params_package}.*;
+import java.util.*;
+import org.springframework.web.bind.annotation.RestController;
+import javax.annotation.Resource;
+
+@Api(tags="${controller.des}")
+@RequestMapping("${controller.url}")
+@RestController
+public class ${controller.name}Template implements ${controller.name}Interface{
+    @Resource(name = "${controller.name}Impl")
+    private ${controller.name}Interface m${controller.name}Impl;
+#foreach($method in ${controller.methodDoms})
+    /**
+    * ${method.des}
+    */
+    @Override
+    @ApiOperation(value = "${method.des}", httpMethod = "$tool.toUpper(${method.method})", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiResponse(code = 200, message = "success", response = ${tool.getTypeClass($method.rep)})
+    @$tool.toUpperCaseFirstOneOtherLow(${method.method})Mapping("${method.url}")
+#if($type=="in")
+    @ServiceInside
+#end
+#if(${method.methodParameterDoms.size()} == 0)
+#if(${method.req}!="")
+    public $tool.typeChange(${method.rep}) ${method.name}(@RequestBody ${method.req} m${method.req}) throws Exception {
+        return m${controller.name}Impl.${method.name}(m${method.req});
+    }
+#else
+    public $tool.typeChange(${method.rep}) ${method.name}() throws Exception {
+        return m${controller.name}Impl.${method.name}();
+    }
+#end
+#else
+#if($tool.toUpperCase(${method.method}) == "POST")
+    public $tool.typeChange(${method.rep}) ${method.name}(@RequestBody ${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params) throws Exception {
+        return m${controller.name}Impl.${method.name}(m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params);
+    }
+#else
+    public $tool.typeChange(${method.rep}) ${method.name}(${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params) throws Exception {
+        return m${controller.name}Impl.${method.name}(m${controller.name}${tool.toUpperCaseFirstOne($method.name)}Params);
+    }
+#end
+#end
+#end
+}
+]]>
+    </file>
+
 #end
 </proto>

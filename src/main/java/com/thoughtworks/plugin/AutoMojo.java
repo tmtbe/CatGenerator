@@ -1,6 +1,6 @@
-package com.huiyi.plugin;
+package com.thoughtworks.plugin;
 
-import com.huiyi.plugin.doms.ReadProto;
+import com.thoughtworks.plugin.doms.ReadProto;
 import org.apache.maven.model.Build;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -31,8 +31,8 @@ public class AutoMojo extends AbstractMojo {
 
     public void execute() throws MojoExecutionException {
         Build build = project.getBuild();
-        String autoGenpath = build.getSourceDirectory() + "/com/huiyi/autogen";
-        deleteDirectory(autoGenpath);
+        //String autoGenpath = build.getSourceDirectory() + "/com/thoughtworks/autogen";
+        //deleteDirectory(autoGenpath);
         Global.LocalPath = build.getSourceDirectory() + "/";
         String filepath = build.getSourceDirectory() + "/../resources/catgen/";
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();

@@ -1,7 +1,7 @@
-package com.huiyi.plugin.doms;
+package com.thoughtworks.plugin.doms;
 
-import com.huiyi.plugin.tools.BaseTools;
-import com.huiyi.plugin.tools.JavaTool;
+import com.thoughtworks.plugin.tools.BaseTools;
+import com.thoughtworks.plugin.tools.JavaTool;
 import org.dom4j.Element;
 
 import java.lang.reflect.InvocationTargetException;
@@ -26,6 +26,7 @@ public class ProtoDom {
     private String type;
     private String outName;
     private String useGate = "true";
+
     public ProtoDom() {
         javaTool = new JavaTool();
         baseParamDoms = new ArrayList<>();
@@ -113,13 +114,9 @@ public class ProtoDom {
     }
 
     public void setEnvironmentDoms(Element element) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        Iterator envionment = element.elementIterator();
-        while (envionment.hasNext()) {
-            EnvironmentDom environmentDom = new EnvironmentDom();
-            Element envionment_element = (Element) envionment.next();
-            environmentDom.setElement(envionment_element);
-            environmentDoms.put(environmentDom.getLanguage(), environmentDom);
-        }
+        EnvironmentDom environmentDom = new EnvironmentDom();
+        environmentDom.setElement(element);
+        environmentDoms.put(environmentDom.getLanguage(), environmentDom);
     }
 
     public ArrayList<ModelDom> getCompatibleGenericsModelDoms() {
@@ -240,7 +237,7 @@ public class ProtoDom {
                     throw new Exception(type + "->没有找到对应的Model");
                 }
                 allModelDomMap.put(type, modelDom1);
-                if(modelDom1==modelDom){
+                if (modelDom1 == modelDom) {
                     return;
                 }
                 getAllModel(modelDom1, modelDomMap);

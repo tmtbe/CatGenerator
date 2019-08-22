@@ -1,4 +1,4 @@
-package com.huiyi.plugin.tools;
+package com.thoughtworks.plugin.tools;
 
 import java.util.HashMap;
 import java.util.Map;

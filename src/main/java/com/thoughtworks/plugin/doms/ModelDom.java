@@ -1,4 +1,4 @@
-package com.huiyi.plugin.doms;
+package com.thoughtworks.plugin.doms;
 
 import org.dom4j.Attribute;
 import org.dom4j.Element;

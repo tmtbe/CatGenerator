@@ -1,6 +1,5 @@
-package com.huiyi.plugin.doms;
+package com.thoughtworks.plugin.doms;
 
-import com.huiyi.plugin.tools.BaseTools;
 import org.dom4j.Attribute;
 import org.dom4j.Element;
 
@@ -8,24 +7,17 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
-public class ModelParameterDom implements Cloneable {
+public class MarcoDom {
     private String name;
     private String type;
+    private String value;
     private String des;
-    private String sen;
-
     public void setElement(Element element) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         List<Attribute> attributes = element.attributes();
         for (Attribute attribute : attributes) {
-            Class<ModelParameterDom> clz = ModelParameterDom.class;
+            Class<MarcoDom> clz = MarcoDom.class;
             Method mt = clz.getMethod("set" + Help.toUpperCaseFirstOne(attribute.getName()), String.class);
             mt.invoke(this, attribute.getValue());
-        }
-        if (sen != null) {
-            sen = sen.toUpperCase();
-            if (sen.equals("AUTO")) {
-                sen = BaseTools.getInstance().getAutoSen(name);
-            }
         }
     }
 
@@ -37,14 +29,6 @@ public class ModelParameterDom implements Cloneable {
         this.name = name;
     }
 
-    public String getDes() {
-        return des;
-    }
-
-    public void setDes(String des) {
-        this.des = des;
-    }
-
     public String getType() {
         return type;
     }
@@ -53,16 +37,19 @@ public class ModelParameterDom implements Cloneable {
         this.type = type;
     }
 
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return super.clone();
+    public String getValue() {
+        return value;
     }
 
-    public String getSen() {
-        return sen;
+    public void setValue(String value) {
+        this.value = value;
     }
 
-    public void setSen(String sen) {
-        this.sen = sen;
+    public String getDes() {
+        return des;
+    }
+
+    public void setDes(String des) {
+        this.des = des;
     }
 }
